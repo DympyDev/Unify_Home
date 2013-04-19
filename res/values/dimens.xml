@@ -6,5 +6,6 @@
     <dimen name="item_workspace_divider">16dp</dimen>
     <dimen name="workspace_padding_top">5dp</dimen>
     <dimen name="workspace_padding_bottom">55dp</dimen>
+    <dimen name="icon_size">48dp</dimen>
 
 </resources>

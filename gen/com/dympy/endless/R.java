@@ -29,6 +29,7 @@ public final class R {
          */
         public static final int activity_horizontal_margin=0x7f050000;
         public static final int activity_vertical_margin=0x7f050001;
+        public static final int icon_size=0x7f050005;
         public static final int item_workspace_divider=0x7f050002;
         public static final int workspace_padding_bottom=0x7f050004;
         public static final int workspace_padding_top=0x7f050003;
@@ -42,18 +43,17 @@ public final class R {
         public static final int ic_launcher=0x7f020005;
     }
     public static final class id {
-        public static final int action_addScreen=0x7f09000b;
-        public static final int action_settings=0x7f09000a;
+        public static final int action_addScreen=0x7f09000a;
+        public static final int action_settings=0x7f090009;
         public static final int allAppsBtn=0x7f090002;
         public static final int fragment_workspace_list=0x7f090004;
-        public static final int img_appitem_icon=0x7f090006;
-        public static final int item_workspace_grid_apps=0x7f090009;
-        public static final int item_workspace_txt_title=0x7f090008;
+        public static final int item_workspace_grid_apps=0x7f090008;
+        public static final int item_workspace_txt_title=0x7f090007;
         public static final int layout_appitem_content=0x7f090005;
         public static final int pager=0x7f090000;
         public static final int pager_tab_strip=0x7f090001;
         public static final int section_label=0x7f090003;
-        public static final int txt_appitem_name=0x7f090007;
+        public static final int txt_appitem_name=0x7f090006;
     }
     public static final class layout {
         public static final int activity_launcher=0x7f030000;

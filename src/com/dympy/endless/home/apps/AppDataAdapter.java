@@ -3,16 +3,16 @@ package com.dympy.endless.home.apps;
 
 import java.util.ArrayList;
 
-import com.dympy.endless.R;
-
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.dympy.endless.R;
 
 public class AppDataAdapter extends ArrayAdapter<AppData> {
     Context context;
@@ -37,8 +37,6 @@ public class AppDataAdapter extends ArrayAdapter<AppData> {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new AppDataHolder();
-            holder.imgIcon = (ImageView) row
-                    .findViewById(R.id.img_appitem_icon);
             holder.txtTitle = (TextView) row
                     .findViewById(R.id.txt_appitem_name);
 
@@ -49,13 +47,15 @@ public class AppDataAdapter extends ArrayAdapter<AppData> {
 
         AppData app = data.get(position);
         holder.txtTitle.setText(app.getAppName());
-        holder.imgIcon.setImageDrawable(app.getAppIcon());
+        Drawable icon = app.getAppIcon();
+        icon.setBounds(0, 0, context.getResources().getDimensionPixelOffset(R.dimen.icon_size),
+                context.getResources().getDimensionPixelOffset(R.dimen.icon_size));
+        holder.txtTitle.setCompoundDrawables(null, icon, null, null);
 
         return row;
     }
 
     static class AppDataHolder {
-        ImageView imgIcon;
         TextView txtTitle;
     }
 }
