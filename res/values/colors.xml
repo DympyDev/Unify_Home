@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="BackgroundColor">#E3E3E3</color>
+    <color name="White">#FFFFFF</color>
+    <color name="Black">#000000</color>
+    <color name="Blue">#0099CC</color>
+    <color name="Blue.Transparent">#4B0099CC</color>
+    <color name="Blue.Light">#33B5E5</color>
+    <color name="Blue.Light.Transparent">#4B33B5E5</color>
+    <color name="Grey">#3B3B3B</color>
+    <color name="Grey.Transparent">#4B3B3B3B</color>
+    <color name="Grey.Light">#707070</color>
+    <color name="Grey.Light.Transparent">#4B707070</color>
+
+</resources>

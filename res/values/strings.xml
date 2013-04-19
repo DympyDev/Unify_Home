@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Endless</string>
+    <string name="action_settings">Preferences</string>
+    <string name="action_addscreen">Add Screen</string>
+    <string name="title_social">Social</string>
+
+</resources>
