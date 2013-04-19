@@ -9,11 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.dympy.endless.R;
 import com.dympy.endless.home.apps.AppDataAdapter;
+import com.dympy.endless.home.ui.CustomGrid;
 
 public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
     Context context;
@@ -40,7 +40,7 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
             holder = new WorkspaceItemHolder();
             holder.itemTitle = (TextView) row
                     .findViewById(R.id.item_workspace_txt_title);
-            holder.appsGrid = (GridView) row
+            holder.appsGrid = (CustomGrid) row
                     .findViewById(R.id.item_workspace_grid_apps);
 
             row.setTag(holder);
@@ -53,6 +53,7 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
         if (item.getItemType() == WorkspaceItem.Type.APPS) {
             AppDataAdapter appsAdapter = new AppDataAdapter(context,
                     R.layout.list_item_app, item.getApps());
+            holder.appsGrid.setExpanded(true);
             holder.appsGrid.setAdapter(appsAdapter);
         }
 
@@ -61,6 +62,6 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
 
     static class WorkspaceItemHolder {
         TextView itemTitle;
-        GridView appsGrid;
+        CustomGrid appsGrid;
     }
 }

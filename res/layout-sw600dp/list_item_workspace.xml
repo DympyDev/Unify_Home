@@ -13,11 +13,12 @@
         android:text="@string/app_name"
         android:textAppearance="@style/DefaultTextStyle.Medium" />
 
-    <GridView
+    <com.dympy.endless.home.ui.CustomGrid
         android:id="@+id/item_workspace_grid_apps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:isScrollContainer="false"
         android:numColumns="6" >
-    </GridView>
+    </com.dympy.endless.home.ui.CustomGrid>
 
 </LinearLayout>

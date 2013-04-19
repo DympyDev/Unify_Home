@@ -111,9 +111,10 @@ public class LauncherModel extends Application {
         fourthItem.addApp(appsArray.get(12));
         fourthItem.addApp(appsArray.get(13));
         fourthItem.addApp(appsArray.get(14));
-        //fourthItem.addApp(appsArray.get(15));
+        fourthItem.addApp(appsArray.get(15));
         fourthItem.addApp(appsArray.get(16));
         fourthItem.addApp(appsArray.get(17));
+        fourthItem.addApp(appsArray.get(18));
 
         addToWorkspaceScreen(mainScreenID, fourthItem);
 
