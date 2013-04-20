@@ -30,6 +30,7 @@
         android:weightSum="7" >
 
         <ImageButton
+            android:id="@+id/hotseat_1"
             android:layout_width="match_parent"
             android:layout_height="75dip"
             android:layout_weight="1"
@@ -38,6 +39,7 @@
             android:src="@drawable/ic_add" />
 
         <ImageButton
+            android:id="@+id/hotseat_2"
             android:layout_width="match_parent"
             android:layout_height="75dip"
             android:layout_weight="1"
@@ -46,6 +48,7 @@
             android:src="@drawable/ic_add" />
 
         <ImageButton
+            android:id="@+id/hotseat_3"
             android:layout_width="match_parent"
             android:layout_height="75dip"
             android:layout_weight="1"
@@ -63,6 +66,7 @@
             android:src="@drawable/ic_apps" />
 
         <ImageButton
+            android:id="@+id/hotseat_4"
             android:layout_width="match_parent"
             android:layout_height="75dip"
             android:layout_weight="1"
@@ -71,6 +75,7 @@
             android:src="@drawable/ic_add" />
 
         <ImageButton
+            android:id="@+id/hotseat_5"
             android:layout_width="match_parent"
             android:layout_height="75dip"
             android:layout_weight="1"
@@ -79,6 +84,7 @@
             android:src="@drawable/ic_add" />
 
         <ImageButton
+            android:id="@+id/hotseat_6"
             android:layout_width="match_parent"
             android:layout_height="75dip"
             android:layout_weight="1"

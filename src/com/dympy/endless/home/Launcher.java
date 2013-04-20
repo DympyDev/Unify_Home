@@ -31,11 +31,13 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
     private static String TAG = "WORKSPACE_DEBUG";
 
+    private ImageButton allApps;
     private ImageButton hotseat1;
     private ImageButton hotseat2;
-    private ImageButton allApps;
     private ImageButton hotseat3;
     private ImageButton hotseat4;
+    private ImageButton hotseat5;
+    private ImageButton hotseat6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,17 +66,23 @@ public class Launcher extends FragmentActivity implements OnClickListener {
     }
 
     private void initButtons() {
+        allApps = (ImageButton) findViewById(R.id.all_apps);
         hotseat1 = (ImageButton) findViewById(R.id.hotseat_1);
         hotseat2 = (ImageButton) findViewById(R.id.hotseat_2);
-        allApps = (ImageButton) findViewById(R.id.all_apps);
         hotseat3 = (ImageButton) findViewById(R.id.hotseat_3);
         hotseat4 = (ImageButton) findViewById(R.id.hotseat_4);
+        hotseat5 = (ImageButton) findViewById(R.id.hotseat_5);
+        hotseat6 = (ImageButton) findViewById(R.id.hotseat_6);
 
+        allApps.setOnClickListener(this);
         hotseat1.setOnClickListener(this);
         hotseat2.setOnClickListener(this);
-        allApps.setOnClickListener(this);
         hotseat3.setOnClickListener(this);
         hotseat4.setOnClickListener(this);
+        if(hotseat5 != null && hotseat6 != null){
+            hotseat5.setOnClickListener(this);
+            hotseat6.setOnClickListener(this);
+        }
     }
 
     @Override

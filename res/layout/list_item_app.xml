@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_appitem_content"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
+    android:layout_height="@dimen/app_item_height"
     android:orientation="vertical"
     android:padding="5dp" >
 
@@ -15,4 +15,5 @@
         android:singleLine="false"
         android:text="@string/app_name"
         android:textAppearance="@style/DefaultTextStyle.AppFont" />
-</LinearLayout>
+
+</LinearLayout>

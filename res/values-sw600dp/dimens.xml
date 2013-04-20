@@ -2,5 +2,7 @@
 <resources>
 
     <dimen name="workspace_padding_bottom">70dp</dimen>
+    <dimen name="icon_size">60dp</dimen>
+    <dimen name="app_item_height">100dp</dimen>
 
 </resources>
