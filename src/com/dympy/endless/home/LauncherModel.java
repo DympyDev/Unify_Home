@@ -10,6 +10,8 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
@@ -30,6 +32,7 @@ public class LauncherModel extends Application {
     public AppWidgetManager widgetManager;
     public int screenCount = 1;
     public boolean hasLoadedApps = false;
+    private Boolean firstTime = null;
 
     @Override
     public void onCreate() {
@@ -40,7 +43,7 @@ public class LauncherModel extends Application {
         for (AppWidgetProviderInfo widgetInfo : widgetsArray) {
             Log.d(TAG, "Found widget /w label: " + widgetInfo.label);
         }
-        
+
         populateWorkspaces();
         // TODO: Add the broadcast receiver for new or removed apps
 
@@ -51,6 +54,20 @@ public class LauncherModel extends Application {
         appsArray = new ArrayList<AppData>();
         screenArray = new ArrayList<Fragment>();
         workspaceScreens = new ArrayList<WorkspaceScreen>();
+    }
+
+    private boolean isFirstTime() {
+        if (firstTime == null) {
+            SharedPreferences mPreferences = this.getSharedPreferences("first_time",
+                    Context.MODE_PRIVATE);
+            firstTime = mPreferences.getBoolean("firstTime", true);
+            if (firstTime) {
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putBoolean("firstTime", false);
+                editor.commit();
+            }
+        }
+        return firstTime;
     }
 
     private void populateApps() {
@@ -90,7 +107,7 @@ public class LauncherModel extends Application {
         DatabaseHandler db = new DatabaseHandler(this);
         workspaceScreens = db.getWorkspaces();
 
-        if (workspaceScreens.size() == 0) {
+        if (isFirstTime()) {
             db.addWorkspaceScreen(0, "Main");
             workspaceScreens = db.getWorkspaces();
         }
