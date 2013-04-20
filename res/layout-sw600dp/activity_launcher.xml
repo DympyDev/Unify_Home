@@ -54,7 +54,7 @@
             android:src="@drawable/ic_add" />
 
         <ImageButton
-            android:id="@+id/allAppsBtn"
+            android:id="@+id/all_apps"
             android:layout_width="match_parent"
             android:layout_height="75dip"
             android:layout_weight="1"

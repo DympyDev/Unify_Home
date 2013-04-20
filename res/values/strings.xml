@@ -5,5 +5,7 @@
     <string name="action_settings">Preferences</string>
     <string name="action_addscreen">Add Screen</string>
     <string name="title_social">Social</string>
+    <string name="title_activity_drawer">Apps</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

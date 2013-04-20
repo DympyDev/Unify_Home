@@ -24,8 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.dympy.endless.home.workspace.Workspace" >
+        </activity>
         <activity
-            android:name="com.dympy.endless.home.workspace.Workspace">
+            android:name="com.dympy.endless.home.apps.Drawer"
+            android:label="@string/title_activity_drawer" >
         </activity>
     </application>
 

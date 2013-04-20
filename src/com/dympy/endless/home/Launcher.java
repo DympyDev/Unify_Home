@@ -1,6 +1,7 @@
 
 package com.dympy.endless.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,19 +13,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dympy.endless.R;
+import com.dympy.endless.home.apps.Drawer;
 import com.dympy.endless.home.workspace.Workspace;
 
-public class Launcher extends FragmentActivity {
+public class Launcher extends FragmentActivity implements OnClickListener {
 
     private SectionsPagerAdapter workspaceScreenAdapter;
     private ViewPager workspaceScreens;
     private LauncherModel application;
 
     private static String TAG = "WORKSPACE_DEBUG";
+
+    private ImageButton hotseat1;
+    private ImageButton hotseat2;
+    private ImageButton allApps;
+    private ImageButton hotseat3;
+    private ImageButton hotseat4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +53,7 @@ public class Launcher extends FragmentActivity {
         workspaceScreens = (ViewPager) findViewById(R.id.pager);
         workspaceScreens.setAdapter(workspaceScreenAdapter);
         workspaceScreens.setCurrentItem(1);
+        initButtons();
     }
 
     @Override
@@ -49,6 +61,33 @@ public class Launcher extends FragmentActivity {
         // TODO: Lookup how to add items to the action bar
         getMenuInflater().inflate(R.menu.launcher, menu);
         return true;
+    }
+
+    private void initButtons() {
+        hotseat1 = (ImageButton) findViewById(R.id.hotseat_1);
+        hotseat2 = (ImageButton) findViewById(R.id.hotseat_2);
+        allApps = (ImageButton) findViewById(R.id.all_apps);
+        hotseat3 = (ImageButton) findViewById(R.id.hotseat_3);
+        hotseat4 = (ImageButton) findViewById(R.id.hotseat_4);
+
+        hotseat1.setOnClickListener(this);
+        hotseat2.setOnClickListener(this);
+        allApps.setOnClickListener(this);
+        hotseat3.setOnClickListener(this);
+        hotseat4.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.all_apps:
+                Intent drawer = new Intent(this, Drawer.class);
+                startActivity(drawer);
+                break;
+            default:
+                Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     /**
