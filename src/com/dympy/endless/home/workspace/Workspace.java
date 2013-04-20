@@ -1,8 +1,6 @@
 
 package com.dympy.endless.home.workspace;
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,9 +34,9 @@ public class Workspace extends Fragment {
 
         ListView workspaceItems = (ListView) rootView.findViewById(R.id.fragment_workspace_list);
 
-        ArrayList<WorkspaceItem> items = application.getWorkspaceScreen(workspaceID);
+        WorkspaceScreen items = application.getWorkspaceScreen(workspaceID);
         WorkspaceItemAdapter workspaceAdapter = new WorkspaceItemAdapter(this.getActivity(),
-                R.layout.list_item_workspace, items);
+                R.layout.list_item_workspace, items.getItems());
 
         workspaceItems.addHeaderView(paddingTop);
         workspaceItems.addFooterView(paddingBottom);

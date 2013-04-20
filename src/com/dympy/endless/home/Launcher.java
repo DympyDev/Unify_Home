@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -28,8 +27,6 @@ public class Launcher extends FragmentActivity implements OnClickListener {
     private SectionsPagerAdapter workspaceScreenAdapter;
     private ViewPager workspaceScreens;
     private LauncherModel application;
-
-    private static String TAG = "WORKSPACE_DEBUG";
 
     private ImageButton allApps;
     private ImageButton hotseat1;
@@ -113,14 +110,12 @@ public class Launcher extends FragmentActivity implements OnClickListener {
             switch (position) {
                 case 0:
                     // TODO: The actual social fragment
-                    Log.d(TAG, "Always the Social fragment");
                     Fragment fragment = new DummySectionFragment();
                     Bundle args = new Bundle();
                     args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
                     fragment.setArguments(args);
                     return fragment;
                 default:
-                    Log.d(TAG, "A screen fragment");
                     return application.getWorkspace(position - 1);
 
             }

@@ -3,6 +3,11 @@ package com.dympy.endless.home.workspace;
 
 import java.util.ArrayList;
 
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetHostView;
+import android.appwidget.AppWidgetProviderInfo;
+import android.content.Context;
+
 import com.dympy.endless.home.apps.AppData;
 
 public class WorkspaceItem {
@@ -10,13 +15,23 @@ public class WorkspaceItem {
         WIDGET, APPS
     }
 
+    private int itemID;
     private Type itemType;
     private String itemTitle;
     private ArrayList<AppData> apps;
-    private Object widget;
+    private AppWidgetProviderInfo widget;
+    private Context context;
 
     public WorkspaceItem() {
 
+    }
+
+    public int getItemID() {
+        return itemID;
+    }
+
+    public void setItemID(int itemID) {
+        this.itemID = itemID;
     }
 
     public WorkspaceItem(Type itemType) {
@@ -67,12 +82,22 @@ public class WorkspaceItem {
         this.apps.add(app);
     }
 
-    public Object getWidget() {
+    // TODO: Fix the whole widget part
+    public AppWidgetHostView getWidgetView() {
+        AppWidgetHost appWidgetHost = new AppWidgetHost(context, 0);
+        int appWidgetId = appWidgetHost.allocateAppWidgetId();
+        AppWidgetHostView hostView = appWidgetHost.createView(context, appWidgetId, widget);
+        hostView.setAppWidget(appWidgetId, widget);
+        return hostView;
+    }
+
+    public AppWidgetProviderInfo getWidget() {
         return widget;
     }
 
-    public void setWidget(Object widget) {
+    public void setWidget(AppWidgetProviderInfo widget, Context context) {
         this.widget = widget;
+        this.context = context;
     }
 
 }

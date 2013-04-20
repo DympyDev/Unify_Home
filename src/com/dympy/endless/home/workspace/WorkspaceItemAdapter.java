@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dympy.endless.R;
@@ -40,6 +41,8 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
             holder = new WorkspaceItemHolder();
             holder.itemTitle = (TextView) row
                     .findViewById(R.id.item_workspace_txt_title);
+            holder.widgetContent = (LinearLayout) row
+                    .findViewById(R.id.item_workspace_layout_widget);
             holder.appsGrid = (CustomGrid) row
                     .findViewById(R.id.item_workspace_grid_apps);
 
@@ -55,6 +58,8 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
                     R.layout.list_item_app, item.getApps());
             holder.appsGrid.setExpanded(true);
             holder.appsGrid.setAdapter(appsAdapter);
+        } else if (item.getItemType() == WorkspaceItem.Type.WIDGET) {
+            holder.widgetContent.addView(item.getWidgetView());
         }
 
         return row;
@@ -62,6 +67,7 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
 
     static class WorkspaceItemHolder {
         TextView itemTitle;
+        LinearLayout widgetContent;
         CustomGrid appsGrid;
     }
 }

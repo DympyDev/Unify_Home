@@ -6,34 +6,43 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.dympy.endless.home.apps.AppData;
-import com.dympy.endless.home.workspace.Workspace;
-import com.dympy.endless.home.workspace.WorkspaceItem;
-
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+
+import com.dympy.endless.home.apps.AppData;
+import com.dympy.endless.home.workspace.Workspace;
+import com.dympy.endless.home.workspace.WorkspaceScreen;
 
 public class LauncherModel extends Application {
 
     private static String TAG = "LAUNCHERMODEL_DEBUG";
 
     private ArrayList<AppData> appsArray;
+    private List<AppWidgetProviderInfo> widgetsArray;
     private ArrayList<Fragment> screenArray;
-    private ArrayList<ArrayList<WorkspaceItem>> workspaceScreens;
+    private ArrayList<WorkspaceScreen> workspaceScreens;
+    public AppWidgetManager widgetManager;
     public int screenCount = 1;
     public boolean hasLoadedApps = false;
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "In onCreate");
         initVars();
         populateApps();
+        populateWidgets();
+
+        for (AppWidgetProviderInfo widgetInfo : widgetsArray) {
+            Log.d(TAG, "Found widget /w label: " + widgetInfo.label);
+        }
+        
         populateWorkspaces();
-        // TODO: Add the broadcast receiver new or removed apps
+        // TODO: Add the broadcast receiver for new or removed apps
 
         super.onCreate();
     }
@@ -41,7 +50,7 @@ public class LauncherModel extends Application {
     private void initVars() {
         appsArray = new ArrayList<AppData>();
         screenArray = new ArrayList<Fragment>();
-        workspaceScreens = new ArrayList<ArrayList<WorkspaceItem>>();
+        workspaceScreens = new ArrayList<WorkspaceScreen>();
     }
 
     private void populateApps() {
@@ -71,63 +80,28 @@ public class LauncherModel extends Application {
         hasLoadedApps = true;
     }
 
+    private void populateWidgets() {
+        widgetManager = AppWidgetManager.getInstance(this);
+        widgetsArray = widgetManager.getInstalledProviders();
+        sortWidgets();
+    }
+
     private void populateWorkspaces() {
-        // TODO: Retrieve from database or something
-        Workspace mainScreen = new Workspace();
-        int mainScreenID = addWorkspaceScreen();
-        mainScreen.setWorkspaceName("Main");
-        mainScreen.setWorkspaceID(mainScreenID);
-        Log.d(TAG, "Created mainScreen with id: " + mainScreenID);
+        DatabaseHandler db = new DatabaseHandler(this);
+        workspaceScreens = db.getWorkspaces();
 
-        WorkspaceItem firstItem = new WorkspaceItem(WorkspaceItem.Type.APPS);
-        firstItem.setItemTitle("Test 1");
-        firstItem.addApp(appsArray.get(0));
-        firstItem.addApp(appsArray.get(1));
-        firstItem.addApp(appsArray.get(2));
-        firstItem.addApp(appsArray.get(3));
+        if (workspaceScreens.size() == 0) {
+            db.addWorkspaceScreen(0, "Main");
+            workspaceScreens = db.getWorkspaces();
+        }
 
-        addToWorkspaceScreen(mainScreenID, firstItem);
+        for (int i = 0; i < workspaceScreens.size(); i++) {
+            Workspace temp = new Workspace();
+            temp.setWorkspaceName(workspaceScreens.get(i).getScreenName());
+            temp.setWorkspaceID(workspaceScreens.get(i).getScreenID());
 
-        WorkspaceItem secondItem = new WorkspaceItem(WorkspaceItem.Type.APPS);
-        secondItem.setItemTitle("Test 2");
-        secondItem.addApp(appsArray.get(4));
-        secondItem.addApp(appsArray.get(5));
-        secondItem.addApp(appsArray.get(6));
-        secondItem.addApp(appsArray.get(7));
-
-        addToWorkspaceScreen(mainScreenID, secondItem);
-
-        WorkspaceItem thirdItem = new WorkspaceItem(WorkspaceItem.Type.APPS);
-        thirdItem.setItemTitle("Test 3");
-        thirdItem.addApp(appsArray.get(8));
-        thirdItem.addApp(appsArray.get(9));
-        thirdItem.addApp(appsArray.get(10));
-        thirdItem.addApp(appsArray.get(11));
-
-        addToWorkspaceScreen(mainScreenID, thirdItem);
-
-        WorkspaceItem fourthItem = new WorkspaceItem(WorkspaceItem.Type.APPS);
-        fourthItem.setItemTitle("Test 4");
-        fourthItem.addApp(appsArray.get(12));
-        fourthItem.addApp(appsArray.get(13));
-        fourthItem.addApp(appsArray.get(14));
-        fourthItem.addApp(appsArray.get(15));
-        fourthItem.addApp(appsArray.get(16));
-        fourthItem.addApp(appsArray.get(17));
-        fourthItem.addApp(appsArray.get(18));
-
-        addToWorkspaceScreen(mainScreenID, fourthItem);
-
-        addWorkspace(mainScreen);
-
-        Workspace mediaScreen = new Workspace();
-        int mediaScreenID = addWorkspaceScreen();
-        mediaScreen.setWorkspaceName("Media");
-        mediaScreen.setWorkspaceID(mediaScreenID);
-        Log.d(TAG, "Created mediaScreen with id: " + mediaScreenID);
-
-        addWorkspace(mediaScreen);
-        Log.d(TAG, "Created the screens");
+            addWorkspace(temp);
+        }
     }
 
     /*
@@ -163,11 +137,28 @@ public class LauncherModel extends Application {
     }
 
     /*
+     * The widgets stuff
+     */
+
+    public List<AppWidgetProviderInfo> getWidgets() {
+        return widgetsArray;
+    }
+
+    public void sortWidgets() {
+        Collections.sort(widgetsArray, new WidgetComporator());
+    }
+
+    public class WidgetComporator implements Comparator<AppWidgetProviderInfo> {
+        @SuppressLint("DefaultLocale")
+        @Override
+        public int compare(AppWidgetProviderInfo o1, AppWidgetProviderInfo o2) {
+            return (o1.label.toLowerCase()).compareTo(o2.label.toLowerCase());
+        }
+    }
+
+    /*
      * The workspace stuff
      */
-    public ArrayList<Fragment> getWorkspaceArray() {
-        return screenArray;
-    }
 
     public Fragment getWorkspace(int id) {
         return screenArray.get(id);
@@ -178,31 +169,10 @@ public class LauncherModel extends Application {
         screenCount += 1;
     }
 
-    public int getWorkspaceSize() {
-        return screenArray.size();
-    }
-
     /*
      * The workspace screen stuff
      */
-    public ArrayList<WorkspaceItem> getWorkspaceScreen(int screenID) {
+    public WorkspaceScreen getWorkspaceScreen(int screenID) {
         return workspaceScreens.get(screenID);
-    }
-
-    public void addToWorkspaceScreen(int screenID, WorkspaceItem item) {
-        // TODO: A check to see if the WorkspaceScreen has been instantiated
-        // (Possibly not needed)
-        workspaceScreens.get(screenID).add(item);
-    }
-
-    /**
-     * Adds a new WorkspaceScreen
-     * 
-     * @return the id of the newly created WorkspaceScreen
-     */
-    public int addWorkspaceScreen() {
-        ArrayList<WorkspaceItem> tempScreen = new ArrayList<WorkspaceItem>();
-        workspaceScreens.add(tempScreen);
-        return workspaceScreens.size() - 1;
     }
 }
