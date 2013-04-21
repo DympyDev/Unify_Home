@@ -45,12 +45,13 @@ public final class R {
         public static final int ic_add=0x7f020002;
         public static final int ic_apps=0x7f020003;
         public static final int ic_dash=0x7f020004;
-        public static final int ic_launcher=0x7f020005;
+        public static final int ic_horizontal_settings=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
     }
     public static final class id {
-        public static final int action_add_item=0x7f0a0013;
-        public static final int action_add_screen=0x7f0a0012;
-        public static final int action_settings=0x7f0a0011;
+        public static final int action_add_item=0x7f0a0014;
+        public static final int action_add_screen=0x7f0a0013;
+        public static final int action_settings=0x7f0a0012;
         public static final int activity_drawer_appgrid=0x7f0a0000;
         public static final int all_apps=0x7f0a0005;
         public static final int fragment_workspace_list=0x7f0a000b;
@@ -60,8 +61,9 @@ public final class R {
         public static final int hotseat_4=0x7f0a0007;
         public static final int hotseat_5=0x7f0a0008;
         public static final int hotseat_6=0x7f0a0009;
-        public static final int item_workspace_grid_apps=0x7f0a0010;
-        public static final int item_workspace_layout_widget=0x7f0a000f;
+        public static final int item_workspace_btn_settings=0x7f0a000f;
+        public static final int item_workspace_grid_apps=0x7f0a0011;
+        public static final int item_workspace_layout_widget=0x7f0a0010;
         public static final int item_workspace_txt_title=0x7f0a000e;
         public static final int layout_appitem_content=0x7f0a000c;
         public static final int pager=0x7f0a0001;
@@ -70,6 +72,7 @@ public final class R {
         public static final int txt_appitem_name=0x7f0a000d;
     }
     public static final class integer {
+        public static final int add_app_columns=0x7f060002;
         public static final int drawer_app_columns=0x7f060001;
         public static final int workspace_app_columns=0x7f060000;
     }

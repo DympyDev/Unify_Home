@@ -34,6 +34,7 @@ public class LauncherModel extends Application {
     public int screenCount = 1;
     public boolean hasLoadedApps = false;
     private Boolean firstTime = null;
+    private DatabaseHandler db;
 
     @Override
     public void onCreate() {
@@ -51,10 +52,10 @@ public class LauncherModel extends Application {
         appsArray = new ArrayList<AppData>();
         screenArray = new ArrayList<Fragment>();
         workspaceScreens = new ArrayList<WorkspaceScreen>();
+        db = new DatabaseHandler(this);
     }
 
     private void populateApps() {
-        // TODO: Make threaded (I think..)
         final PackageManager pm = getPackageManager();
         List<ApplicationInfo> packages = pm
                 .getInstalledApplications(PackageManager.GET_META_DATA);
@@ -81,7 +82,6 @@ public class LauncherModel extends Application {
     }
 
     private void populateWorkspaces() {
-        DatabaseHandler db = new DatabaseHandler(this);
         workspaceScreens = db.getWorkspaces();
 
         if (isFirstTime()) {
@@ -199,6 +199,10 @@ public class LauncherModel extends Application {
     /*
      * The workspace stuff
      */
+    public void addAppToItem(WorkspaceItem item, AppData app) {
+        item.addApp(app);
+        db.addAppItem(item.getWorkspaceID(), item.getItemTitle(), app.getPackageName());
+    }
 
     public Fragment getWorkspace(int id) {
         return screenArray.get(id);
