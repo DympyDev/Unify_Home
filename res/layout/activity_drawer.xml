@@ -3,7 +3,7 @@
     android:id="@+id/activity_drawer_appgrid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:numColumns="4"
+    android:numColumns="@integer/drawer_app_columns"
     android:scrollbars="none"
     tools:context=".Drawer"
     tools:listitem="@layout/list_item_app" >

@@ -10,7 +10,7 @@ public class WorkspaceScreen {
     private ArrayList<WorkspaceItem> items;
 
     public WorkspaceScreen() {
-
+        items = new ArrayList<WorkspaceItem>();
     }
 
     public int getScreenID() {
@@ -35,6 +35,10 @@ public class WorkspaceScreen {
 
     public void setItems(ArrayList<WorkspaceItem> items) {
         this.items = items;
+    }
+
+    public void addItem(WorkspaceItem item) {
+        this.items.add(item);
     }
 
 }

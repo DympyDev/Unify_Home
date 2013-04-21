@@ -58,8 +58,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // Create the Workspace Item Table
         String CREATE_WORKSPACE_ITEM_TABLE = "CREATE TABLE " + TABLE_WORKSPACE_ITEM + "("
-                + KEY_ITEM_WORKSPACE_ID + " INTEGER,"
-                + KEY_ITEM_NAME + " TEXT," + KEY_ITEM_TYPE + " INTEGER" + ")";
+                + KEY_ITEM_NAME + " TEXT," + KEY_ITEM_WORKSPACE_ID + " INTEGER," + KEY_ITEM_TYPE
+                + " INTEGER" + ")";
         db.execSQL(CREATE_WORKSPACE_ITEM_TABLE);
 
         // Create the App Item Table
@@ -97,12 +97,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    void addWorkspaceScreen(WorkspaceScreen screen) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_SCREEN_ID, screen.getScreenID());
+        values.put(KEY_SCREEN_NAME, screen.getScreenName());
+
+        // Inserting Row
+        db.insert(TABLE_WORKSPACE_SCREEN, null, values);
+        db.close(); // Closing database connection
+
+        // Add entries for all workspace items
+        for (int i = 0; i < screen.getItems().size(); i++) {
+            addWorkspaceItem(screen.getItems().get(i));
+        }
+    }
+
     void addWorkspaceItem(WorkspaceItem item) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_ITEM_NAME, item.getItemTitle());
-        values.put(KEY_ITEM_WORKSPACE_ID, item.getItemID());
+        values.put(KEY_ITEM_WORKSPACE_ID, item.getWorkspaceID());
         values.put(KEY_ITEM_TYPE, ((item.getItemType() == WorkspaceItem.Type.APPS) ? 0 : 1));
 
         // Inserting Row
@@ -111,7 +128,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // Add entries for all apps
         for (int i = 0; i < item.getApps().size(); i++) {
-            addAppItem(item.getItemID(), item.getItemTitle(), item.getApps().get(i)
+            addAppItem(item.getWorkspaceID(), item.getItemTitle(), item.getApps().get(i)
                     .getPackageName());
         }
     }
@@ -167,7 +184,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             do {
                 WorkspaceItem temp = new WorkspaceItem();
                 temp.setItemTitle(cursor.getString(0));
-                temp.setItemID(screenID);
+                temp.setWorkspaceID(screenID);
                 temp.setItemType((cursor.getInt(2) == 0) ? WorkspaceItem.Type.APPS
                         : WorkspaceItem.Type.WIDGET);
                 List<String> tempPackages = getWorkspaceItemApps(screenID, temp.getItemTitle());
@@ -186,7 +203,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         List<String> packageList = new ArrayList<String>();
 
         String selectQuery = "SELECT " + KEY_APP_PACKAGE + " FROM " + TABLE_APP_ITEM + " WHERE "
-                + KEY_APP_ITEM_NAME + "=" + itemName + " AND " + KEY_APP_ITEM_SCREEN + "="
+                + KEY_APP_ITEM_NAME + "='" + itemName + "' AND " + KEY_APP_ITEM_SCREEN + "="
                 + screenID;
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -200,5 +217,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         return packageList;
+    }
+
+    /*
+     * All the remove functions
+     */
+    public void deleteWorkspaceScreen(WorkspaceScreen screen) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_WORKSPACE_SCREEN, KEY_SCREEN_ID + "=" + screen.getScreenID(), null);
+        db.close();
+        for (int i = 0; i < screen.getItems().size(); i++) {
+            deleteWorkspaceItem(screen.getItems().get(i));
+        }
+    }
+
+    public void deleteWorkspaceItem(WorkspaceItem item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_WORKSPACE_ITEM, KEY_ITEM_NAME + "='" + item.getItemTitle() + "' AND "
+                + KEY_ITEM_WORKSPACE_ID + "=" + item.getWorkspaceID(), null);
+        db.close();
+        for (int i = 0; i < item.getApps().size(); i++) {
+            deleteAppItem(item.getWorkspaceID(), item.getItemTitle(), item.getApps().get(i)
+                    .getPackageName());
+        }
+    }
+
+    public void deleteAppItem(int screenID, String itemName, String packageName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_APP_ITEM, KEY_APP_ITEM_SCREEN + "=" + screenID + " AND "
+                + KEY_APP_ITEM_NAME + "='" + itemName + "' AND "
+                + KEY_APP_PACKAGE + "='" + packageName + "'", null);
+        db.close();
     }
 }

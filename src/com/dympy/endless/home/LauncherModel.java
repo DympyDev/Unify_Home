@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.dympy.endless.home.apps.AppData;
 import com.dympy.endless.home.workspace.Workspace;
+import com.dympy.endless.home.workspace.WorkspaceItem;
 import com.dympy.endless.home.workspace.WorkspaceScreen;
 
 public class LauncherModel extends Application {
@@ -40,10 +41,6 @@ public class LauncherModel extends Application {
         populateApps();
         populateWidgets();
 
-        for (AppWidgetProviderInfo widgetInfo : widgetsArray) {
-            Log.d(TAG, "Found widget /w label: " + widgetInfo.label);
-        }
-
         populateWorkspaces();
         // TODO: Add the broadcast receiver for new or removed apps
 
@@ -54,20 +51,6 @@ public class LauncherModel extends Application {
         appsArray = new ArrayList<AppData>();
         screenArray = new ArrayList<Fragment>();
         workspaceScreens = new ArrayList<WorkspaceScreen>();
-    }
-
-    private boolean isFirstTime() {
-        if (firstTime == null) {
-            SharedPreferences mPreferences = this.getSharedPreferences("first_time",
-                    Context.MODE_PRIVATE);
-            firstTime = mPreferences.getBoolean("firstTime", true);
-            if (firstTime) {
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putBoolean("firstTime", false);
-                editor.commit();
-            }
-        }
-        return firstTime;
     }
 
     private void populateApps() {
@@ -97,18 +80,36 @@ public class LauncherModel extends Application {
         hasLoadedApps = true;
     }
 
-    private void populateWidgets() {
-        widgetManager = AppWidgetManager.getInstance(this);
-        widgetsArray = widgetManager.getInstalledProviders();
-        sortWidgets();
-    }
-
     private void populateWorkspaces() {
         DatabaseHandler db = new DatabaseHandler(this);
         workspaceScreens = db.getWorkspaces();
 
         if (isFirstTime()) {
-            db.addWorkspaceScreen(0, "Main");
+            WorkspaceScreen mainScreen = new WorkspaceScreen();
+            mainScreen.setScreenID(0);
+            mainScreen.setScreenName("Main");
+
+            WorkspaceItem standard = new WorkspaceItem(WorkspaceItem.Type.APPS);
+            standard.setWorkspaceID(0);
+            standard.setItemTitle("Standard");
+            // Add the contacts app to this workspaceItem:
+            AppData contacts = getApp("com.android.contacts");
+            if (contacts != null) {
+                standard.addApp(contacts);
+            }
+            // Add the email app to this workspaceItem:
+            AppData email = getApp("com.google.android.email");
+            if (email != null) {
+                standard.addApp(email);
+            }
+            // Add the gallery app to this workspaceItem:
+            AppData gallery = getApp("com.google.android.gallery3d");
+            if (gallery != null) {
+                standard.addApp(gallery);
+            }
+
+            mainScreen.addItem(standard);
+            db.addWorkspaceScreen(mainScreen);
             workspaceScreens = db.getWorkspaces();
         }
 
@@ -119,6 +120,26 @@ public class LauncherModel extends Application {
 
             addWorkspace(temp);
         }
+    }
+
+    private void populateWidgets() {
+        widgetManager = AppWidgetManager.getInstance(this);
+        widgetsArray = widgetManager.getInstalledProviders();
+        sortWidgets();
+    }
+
+    private boolean isFirstTime() {
+        if (firstTime == null) {
+            SharedPreferences mPreferences = this.getSharedPreferences("first_time",
+                    Context.MODE_PRIVATE);
+            firstTime = mPreferences.getBoolean("firstTime", true);
+            if (firstTime) {
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putBoolean("firstTime", false);
+                editor.commit();
+            }
+        }
+        return firstTime;
     }
 
     /*
@@ -146,7 +167,9 @@ public class LauncherModel extends Application {
 
     public AppData getApp(String packageName) {
         for (int i = 0; i < appsArray.size(); i++) {
-            if (appsArray.get(i).getPackageName() == packageName) {
+            Log.d(TAG, "Search package: '" + packageName + "', found package: '"
+                    + appsArray.get(i).getPackageName() + "'");
+            if (appsArray.get(i).getPackageName().equals(packageName)) {
                 return appsArray.get(i);
             }
         }

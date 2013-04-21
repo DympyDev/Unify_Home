@@ -8,9 +8,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.dympy.endless.R;
 import com.dympy.endless.home.apps.AppDataAdapter;
@@ -51,13 +53,21 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
             holder = (WorkspaceItemHolder) row.getTag();
         }
 
-        WorkspaceItem item = data.get(position);
+        final WorkspaceItem item = data.get(position);
         holder.itemTitle.setText(item.getItemTitle());
         if (item.getItemType() == WorkspaceItem.Type.APPS) {
             AppDataAdapter appsAdapter = new AppDataAdapter(context,
                     R.layout.list_item_app, item.getApps());
             holder.appsGrid.setExpanded(true);
             holder.appsGrid.setAdapter(appsAdapter);
+            holder.appsGrid.setOnItemClickListener(new OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    context.startActivity(item.getApps().get(position).getAppIntent());
+
+                }
+            });
         } else if (item.getItemType() == WorkspaceItem.Type.WIDGET) {
             holder.widgetContent.addView(item.getWidgetView());
         }

@@ -15,7 +15,7 @@ public class WorkspaceItem {
         WIDGET, APPS
     }
 
-    private int itemID;
+    private int workspaceID;
     private Type itemType;
     private String itemTitle;
     private ArrayList<AppData> apps;
@@ -26,12 +26,12 @@ public class WorkspaceItem {
 
     }
 
-    public int getItemID() {
-        return itemID;
+    public int getWorkspaceID() {
+        return workspaceID;
     }
 
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
+    public void setWorkspaceID(int workspaceID) {
+        this.workspaceID = workspaceID;
     }
 
     public WorkspaceItem(Type itemType) {
