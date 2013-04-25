@@ -13,12 +13,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dympy.endless.R;
 import com.dympy.endless.home.LauncherModel;
@@ -81,9 +83,24 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
                     context.startActivity(item.getApps().get(position).getAppIntent());
                 }
             });
+            itemHolder.appsGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+                    Toast.makeText(context, "Delete app from workspace item", Toast.LENGTH_SHORT)
+                            .show();
+                    return false;
+                }
+            });
         } else if (item.getItemType() == WorkspaceItem.Type.WIDGET) {
             itemHolder.widgetContent.addView(item.getWidgetView());
         }
+        showSettings(itemHolder, item);
+
+        return row;
+    }
+
+    private void showSettings(final WorkspaceItemHolder itemHolder, final WorkspaceItem item) {
         itemHolder.itemSettings.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -115,33 +132,9 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                         actualDialog.dismiss();
-                        final AlertDialog listDialog;
-                        AlertDialog.Builder listBuilder = new AlertDialog.Builder(context);
                         switch (position) {
                             case 0:
-                                listBuilder.setTitle("Select an app");
-
-                                GridView appGrid = new GridView(context);
-                                appGrid.setNumColumns(3);
-                                AppDataAdapter gridAdapter = new AppDataAdapter(context,
-                                        R.layout.list_item_app, app.getApps());
-                                appGrid.setAdapter(gridAdapter);
-                                listBuilder.setView(appGrid);
-                                listDialog = listBuilder.create();
-
-                                appGrid.setOnItemClickListener(new OnItemClickListener() {
-
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View v,
-                                            int position, long id) {
-                                        listDialog.dismiss();
-                                        app.addAppToItem(item, app.getApps().get(position));
-                                        itemHolder.appsGrid.setAdapter(new AppDataAdapter(context,
-                                                R.layout.list_item_app, item.getApps()));
-                                    }
-                                });
-
-                                listDialog.show();
+                                addAppDialog(itemHolder, item);
                                 break;
                             case 1:
                                 break;
@@ -150,8 +143,35 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
                 });
             }
         });
+    }
 
-        return row;
+    private void addAppDialog(final WorkspaceItemHolder itemHolder,
+            final WorkspaceItem item) {
+        final AlertDialog listDialog;
+        AlertDialog.Builder listBuilder = new AlertDialog.Builder(context);
+        listBuilder.setTitle("Select an app");
+
+        GridView appGrid = new GridView(context);
+        appGrid.setNumColumns(3);
+        AppDataAdapter gridAdapter = new AppDataAdapter(context,
+                R.layout.list_item_app, app.getApps());
+        appGrid.setAdapter(gridAdapter);
+        listBuilder.setView(appGrid);
+        listDialog = listBuilder.create();
+
+        appGrid.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                    int position, long id) {
+                listDialog.dismiss();
+                app.addAppToItem(item, app.getApps().get(position));
+                itemHolder.appsGrid.setAdapter(new AppDataAdapter(context,
+                        R.layout.list_item_app, item.getApps()));
+            }
+        });
+
+        listDialog.show();
     }
 
     static class WorkspaceItemHolder {

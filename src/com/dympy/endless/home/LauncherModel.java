@@ -10,10 +10,12 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
@@ -57,25 +59,24 @@ public class LauncherModel extends Application {
 
     private void populateApps() {
         final PackageManager pm = getPackageManager();
-        List<ApplicationInfo> packages = pm
-                .getInstalledApplications(PackageManager.GET_META_DATA);
-
-        for (ApplicationInfo packageInfo : packages) {
-            if (pm.getLaunchIntentForPackage(packageInfo.packageName) != null) {
-                AppData temp = new AppData();
-                if (packageInfo.loadLabel(pm).toString() == null) {
-                    temp.setAppName((String) pm.getText(
-                            packageInfo.packageName, packageInfo.labelRes,
-                            packageInfo));
-                } else {
-                    temp.setAppName(packageInfo.loadLabel(pm).toString());
-                }
-                temp.setPackageName(packageInfo.packageName);
-                temp.setAppIcon(pm.getApplicationIcon(packageInfo));
-                temp.setAppIntent(pm
-                        .getLaunchIntentForPackage(packageInfo.packageName));
-                addApp(temp);
-            }
+        List<ResolveInfo> packages = pm
+                .queryIntentActivities(
+                        new Intent(Intent.ACTION_MAIN, null).addCategory(Intent.CATEGORY_LAUNCHER),
+                        0);
+        for (ResolveInfo info : packages) {
+            AppData temp = new AppData();
+            temp.setAppName(info.loadLabel(pm).toString());
+            temp.setAppIcon(info.loadIcon(pm));
+            temp.setPackageName(info.activityInfo.applicationInfo.packageName);
+            // info.activityInfo.applicationInfo.className;
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                    Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            intent.setComponent(new ComponentName(info.activityInfo.applicationInfo.packageName,
+                    info.activityInfo.name));
+            temp.setAppIntent(intent);
+            addApp(temp);
         }
         sortApps();
         hasLoadedApps = true;
