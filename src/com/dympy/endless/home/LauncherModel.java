@@ -68,7 +68,6 @@ public class LauncherModel extends Application {
             temp.setAppName(info.loadLabel(pm).toString());
             temp.setAppIcon(info.loadIcon(pm));
             temp.setPackageName(info.activityInfo.applicationInfo.packageName);
-            // info.activityInfo.applicationInfo.className;
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
@@ -202,13 +201,22 @@ public class LauncherModel extends Application {
      */
     public void addAppToItem(WorkspaceItem item, AppData app) {
         item.addApp(app);
-        db.addAppItem(item.getWorkspaceID(), item.getItemTitle(), app.getPackageName());
+        db.addAppItem(item.getWorkspaceID(), item.getItemTitle(), app.getPackageName(),
+                app.getAppName());
+    }
+
+    public void removeAppFromItem(WorkspaceItem item, AppData app) {
+        Log.d(TAG, "Removing " + app.getAppName());
+        item.removeApp(app);
+        db.deleteAppItem(item.getWorkspaceID(), item.getItemTitle(), app.getPackageName(),
+                app.getAppName());
     }
 
     public Fragment getWorkspace(int id) {
         return screenArray.get(id);
     }
 
+    // TODO: Different?
     public void addWorkspace(Fragment newWorkspace) {
         screenArray.add(newWorkspace);
         screenCount += 1;

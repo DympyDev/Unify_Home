@@ -41,6 +41,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // App Item Table Column names
     private static final String KEY_APP_ITEM_NAME = "item_name";
     private static final String KEY_APP_ITEM_SCREEN = "screen_id";
+    private static final String KEY_APP_NAME = "app_name";
     private static final String KEY_APP_PACKAGE = "app_package";
 
     public DatabaseHandler(Context context) {
@@ -64,7 +65,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // Create the App Item Table
         String CREATE_APP_ITEM_TABLE = "CREATE TABLE " + TABLE_APP_ITEM + "("
-                + KEY_APP_ITEM_NAME + " TEXT," + KEY_APP_ITEM_SCREEN + " TEXT," + KEY_APP_PACKAGE
+                + KEY_APP_ITEM_NAME + " TEXT," + KEY_APP_ITEM_SCREEN + " TEXT," + KEY_APP_NAME
+                + " TEXT," + KEY_APP_PACKAGE
                 + " TEXT" + ")";
         db.execSQL(CREATE_APP_ITEM_TABLE);
     }
@@ -129,16 +131,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Add entries for all apps
         for (int i = 0; i < item.getApps().size(); i++) {
             addAppItem(item.getWorkspaceID(), item.getItemTitle(), item.getApps().get(i)
-                    .getPackageName());
+                    .getPackageName(), item.getApps().get(i).getAppName());
         }
     }
 
-    void addAppItem(int screenID, String itemName, String packageName) {
+    void addAppItem(int screenID, String itemName, String packageName, String appName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_APP_ITEM_NAME, itemName);
         values.put(KEY_APP_ITEM_SCREEN, screenID);
+        values.put(KEY_APP_NAME, appName);
         values.put(KEY_APP_PACKAGE, packageName);
 
         // Inserting Row
@@ -199,6 +202,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return items;
     }
 
+    // TODO: change from List<String> to AppData (The return thingy)
     public List<String> getWorkspaceItemApps(int screenID, String itemName) {
         List<String> packageList = new ArrayList<String>();
 
@@ -238,14 +242,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         for (int i = 0; i < item.getApps().size(); i++) {
             deleteAppItem(item.getWorkspaceID(), item.getItemTitle(), item.getApps().get(i)
-                    .getPackageName());
+                    .getPackageName(), item.getApps().get(i).getAppName());
         }
     }
 
-    public void deleteAppItem(int screenID, String itemName, String packageName) {
+    public void deleteAppItem(int screenID, String itemName, String packageName, String appName) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_APP_ITEM, KEY_APP_ITEM_SCREEN + "=" + screenID + " AND "
                 + KEY_APP_ITEM_NAME + "='" + itemName + "' AND "
+                + KEY_APP_NAME + "='" + appName + "' AND "
                 + KEY_APP_PACKAGE + "='" + packageName + "'", null);
         db.close();
     }

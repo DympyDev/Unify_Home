@@ -82,6 +82,10 @@ public class WorkspaceItem {
         this.apps.add(app);
     }
 
+    public void removeApp(AppData app) {
+        this.apps.remove(app);
+    }
+
     // TODO: Fix the whole widget part
     public AppWidgetHostView getWidgetView() {
         AppWidgetHost appWidgetHost = new AppWidgetHost(context, 0);

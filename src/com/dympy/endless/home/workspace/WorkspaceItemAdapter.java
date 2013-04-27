@@ -28,10 +28,11 @@ import com.dympy.endless.home.apps.AppDataAdapter;
 import com.dympy.endless.home.ui.CustomGrid;
 
 public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
-    Context context;
-    LauncherModel app;
-    int layoutResourceId;
-    ArrayList<WorkspaceItem> data = null;
+    private Context context;
+    private LauncherModel app;
+    private int layoutResourceId;
+    private ArrayList<WorkspaceItem> data = null;
+    private boolean longPressed = false;
 
     public WorkspaceItemAdapter(Context context, int layoutResourceId,
             ArrayList<WorkspaceItem> data) {
@@ -80,15 +81,44 @@ public class WorkspaceItemAdapter extends ArrayAdapter<WorkspaceItem> {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    context.startActivity(item.getApps().get(position).getAppIntent());
+                    if (longPressed) {
+                        longPressed = false;
+                    } else {
+                        context.startActivity(item.getApps().get(position).getAppIntent());
+                    }
                 }
             });
             itemHolder.appsGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
 
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-                    Toast.makeText(context, "Delete app from workspace item", Toast.LENGTH_SHORT)
-                            .show();
+                    longPressed = true;
+                    final int appPos = position;
+                    AlertDialog.Builder removeApp = new AlertDialog.Builder(context);
+                    removeApp.setTitle("Remove app");
+                    removeApp
+                            .setMessage("Are you sure you want to remove this app from the workspace?");
+                    removeApp.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
+                        }
+                    });
+                    removeApp.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            String appName = item.getApps().get(appPos).getAppName();
+                            app.removeAppFromItem(item, item.getApps().get(appPos));
+                            itemHolder.appsGrid.setAdapter(new AppDataAdapter(context,
+                                    R.layout.list_item_app, item.getApps()));
+                            Toast.makeText(context, "Removed '" + appName + "'",
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
+                    removeApp.show();
                     return false;
                 }
             });
