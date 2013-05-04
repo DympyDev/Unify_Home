@@ -185,7 +185,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                WorkspaceItem temp = new WorkspaceItem();
+                WorkspaceItem temp = new WorkspaceItem(context);
                 temp.setItemTitle(cursor.getString(0));
                 temp.setWorkspaceID(screenID);
                 temp.setItemType((cursor.getInt(2) == 0) ? WorkspaceItem.Type.APPS
