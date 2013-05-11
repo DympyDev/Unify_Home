@@ -7,5 +7,9 @@
     <string name="action_additem">Add Item</string>
     <string name="title_social">Social</string>
     <string name="title_activity_drawer">Apps</string>
+    <string name="add_item_input">Item name</string>
+    <string name="add_item_radio_app">Apps</string>
+    <string name="add_item_radio_widget">Widget</string>
+    <string name="add_item_radio_hint">What will you add in this Workspace Item?</string>
 
 </resources>

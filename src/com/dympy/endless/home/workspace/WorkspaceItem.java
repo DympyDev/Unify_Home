@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -195,12 +196,12 @@ public class WorkspaceItem {
 	}
 
 	private void showSettingsDialog() {
-		//TODO: Move strings to strings file
+		// TODO: Move strings to strings file
 		final AlertDialog actualDialog;
 		AlertDialog.Builder itemSettings = new AlertDialog.Builder(viewContext);
 		itemSettings.setTitle("Item Settings");
 
-		String[] settings = { "Add app", "Remove item" };
+		String[] settings = { "Add app", "Remove item", "Rename item" };
 		ListView settingsContent = new ListView(viewContext);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(viewContext,
 				android.R.layout.simple_list_item_1, settings);
@@ -223,10 +224,14 @@ public class WorkspaceItem {
 					int position, long id) {
 				actualDialog.dismiss();
 				switch (position) {
-				case 0:
+				case 0: // Add app
 					addAppDialog();
 					break;
-				case 1:
+				case 1: // Remove item
+					removeItemDialog();
+					break;
+				case 2: // Rename item
+					renameItemDialog();
 					break;
 				}
 			}
@@ -234,7 +239,7 @@ public class WorkspaceItem {
 	}
 
 	private void removeAppDialog(final int appPos) {
-		//TODO: Move strings to strings file
+		// TODO: Move strings to strings file
 		AlertDialog.Builder removeApp = new AlertDialog.Builder(viewContext);
 		removeApp.setTitle("Remove app");
 		removeApp
@@ -254,8 +259,7 @@ public class WorkspaceItem {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String appName = getApps().get(appPos).getAppName();
 						app.removeAppFromItem(instance, getApps().get(appPos));
-						appViewGrid.setAdapter(new AppDataAdapter(viewContext,
-								R.layout.list_item_app, getApps()));
+						resetContentView();
 						Toast.makeText(viewContext,
 								"Removed '" + appName + "'", Toast.LENGTH_SHORT)
 								.show();
@@ -264,8 +268,33 @@ public class WorkspaceItem {
 		removeApp.show();
 	}
 
+	private void removeItemDialog() {
+		// TODO: Move strings to strings file
+		AlertDialog.Builder removeApp = new AlertDialog.Builder(viewContext);
+		removeApp.setTitle("Remove item");
+		removeApp
+				.setMessage("Are you sure you want to remove this item from the workspace screen?");
+		removeApp.setNegativeButton("No",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
+		removeApp.setPositiveButton("Yes",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int whichButton) {
+						app.removeItemFromScreen(instance);
+					}
+				});
+		removeApp.show();
+	}
+
 	private void addAppDialog() {
-		//TODO: Move strings to strings file
+		// TODO: Move strings to strings file
 		final AlertDialog listDialog;
 		AlertDialog.Builder listBuilder = new AlertDialog.Builder(viewContext);
 		listBuilder.setTitle("Select an app");
@@ -284,13 +313,68 @@ public class WorkspaceItem {
 			public void onItemClick(AdapterView<?> parent, View v,
 					int position, long id) {
 				listDialog.dismiss();
-				app.addAppToItem(instance, app.getApps().get(position));
-				appViewGrid.setAdapter(new AppDataAdapter(viewContext,
-						R.layout.list_item_app, getApps()));
+				boolean shouldAdd = true;
+				for (AppData tempApp : getApps()) {
+					if (app.getApps().get(position).getPackageName() == tempApp
+							.getPackageName()
+							&& app.getApps().get(position).getActivityName() == tempApp
+									.getActivityName()) {
+						shouldAdd = false;
+					}
+				}
+				if (shouldAdd) {
+					app.addAppToItem(instance, app.getApps().get(position));
+					resetContentView();
+				} else {
+					Toast.makeText(context,
+							"You already have this app in this Item.",
+							Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 
 		listDialog.show();
+	}
+
+	private void renameItemDialog() {
+		// TODO: Move strings to strings file
+		AlertDialog.Builder listDialog = new AlertDialog.Builder(viewContext);
+		listDialog.setTitle("Rename item");
+		listDialog.setMessage("Change the item title");
+
+		final EditText renameText = new EditText(viewContext);
+		renameText.setText(getItemTitle());
+		listDialog.setView(renameText);
+		listDialog.setPositiveButton("Ok",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						app.renameItem(instance, renameText.getText()
+								.toString());
+						setItemTitle(renameText.getText().toString());
+						itemViewTitle.setText(getItemTitle());
+					}
+				});
+
+		listDialog.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+
+		listDialog.show();
+	}
+
+	private void resetContentView() {
+		if (getItemType() == Type.APPS) {
+			appViewGrid.setAdapter(new AppDataAdapter(viewContext,
+					R.layout.list_item_app, getApps()));
+		}
 	}
 
 }
