@@ -53,8 +53,9 @@ public final class R {
         public static final int ic_launcher=0x7f020006;
     }
     public static final class id {
-        public static final int action_add_item=0x7f0b0018;
+        public static final int action_add_item=0x7f0b0019;
         public static final int action_add_screen=0x7f0b0017;
+        public static final int action_remove_screen=0x7f0b0018;
         public static final int action_settings=0x7f0b0016;
         public static final int activity_drawer_appgrid=0x7f0b0000;
         public static final int all_apps=0x7f0b0005;
@@ -94,13 +95,12 @@ public final class R {
         public static final int list_item_workspace=0x7f030006;
     }
     public static final class menu {
-        public static final int drawer=0x7f0a0000;
-        public static final int launcher=0x7f0a0001;
-        public static final int workspace=0x7f0a0002;
+        public static final int launcher=0x7f0a0000;
     }
     public static final class string {
         public static final int action_additem=0x7f080003;
         public static final int action_addscreen=0x7f080002;
+        public static final int action_removescreen=0x7f08000a;
         public static final int action_settings=0x7f080001;
         public static final int add_item_input=0x7f080006;
         public static final int add_item_radio_app=0x7f080007;

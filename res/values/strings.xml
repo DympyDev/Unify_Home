@@ -11,5 +11,6 @@
     <string name="add_item_radio_app">Apps</string>
     <string name="add_item_radio_widget">Widget</string>
     <string name="add_item_radio_hint">What will you add in this Workspace Item?</string>
+    <string name="action_removescreen">Remove Current Screen</string>
 
 </resources>

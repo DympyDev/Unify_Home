@@ -15,7 +15,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.util.Log;
 
 import com.dympy.endless.home.apps.AppData;
 import com.dympy.endless.home.workspace.WorkspaceItem;
@@ -23,7 +22,7 @@ import com.dympy.endless.home.workspace.WorkspaceScreen;
 
 public class LauncherModel extends Application {
 
-	private static String TAG = "LAUNCHERMODEL_DEBUG";
+	// private static String TAG = "LAUNCHERMODEL_DEBUG";
 
 	private ArrayList<AppData> appsArray;
 	private List<AppWidgetProviderInfo> widgetsArray;
@@ -77,8 +76,6 @@ public class LauncherModel extends Application {
 					info.activityInfo.applicationInfo.packageName,
 					info.activityInfo.name));
 			temp.setAppIntent(intent);
-			Log.d(TAG, "ActivityName: " + temp.getActivityName()
-					+ ", PackageName: " + temp.getPackageName());
 			addApp(temp);
 		}
 		sortApps();
@@ -96,7 +93,7 @@ public class LauncherModel extends Application {
 			WorkspaceItem standard = new WorkspaceItem(WorkspaceItem.Type.APPS);
 			standard.setWorkspaceID(0);
 			standard.setItemTitle("Standard");
-			//TODO: Define default apps
+			// TODO: Define default apps
 			// Add the contacts app to this workspaceItem:
 			AppData contacts = getApp("com.android.contacts", "");
 			if (contacts != null) {
@@ -114,7 +111,7 @@ public class LauncherModel extends Application {
 			}
 
 			mainScreen.addItem(standard);
-			db.addWorkspaceScreen(mainScreen);
+			addWorkspaceScreen(mainScreen);
 			workspaceScreens = db.getWorkspaces();
 		}
 	}
@@ -189,7 +186,6 @@ public class LauncherModel extends Application {
 	}
 
 	public void removeAppFromItem(WorkspaceItem item, AppData app) {
-		Log.d(TAG, "Removing " + app.getAppName());
 		item.removeApp(app);
 		db.deleteAppItem(item.getWorkspaceID(), item.getItemTitle(),
 				app.getPackageName(), app.getAppName());
@@ -225,6 +221,11 @@ public class LauncherModel extends Application {
 
 	public void renameItem(WorkspaceItem item, String newTitle) {
 		db.updateWorkspaceItemName(item, newTitle);
+	}
+
+	public void addWorkspaceScreen(WorkspaceScreen temp) {
+		workspaceScreens.add(temp);
+		db.addWorkspaceScreen(temp);
 	}
 
 	/*

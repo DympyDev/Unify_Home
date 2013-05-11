@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.dympy.endless.R;
 import com.dympy.endless.home.apps.Drawer;
 import com.dympy.endless.home.workspace.WorkspaceItem;
+import com.dympy.endless.home.workspace.WorkspaceScreen;
 
 public class Launcher extends FragmentActivity implements OnClickListener {
 
@@ -56,9 +57,11 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
 		workspaceScreens = (ViewPager) findViewById(R.id.pager);
 		workspaceScreens.setAdapter(workspaceScreenAdapter);
-		workspaceScreens.setCurrentItem(1);
+		if (workspaceScreenAdapter.getCount() > 1) {
+			workspaceScreens.setCurrentItem(1);
+		}
 		initButtons();
-		// TODO: Lookup how to add items to the action bar
+		// TODO: Lookup how to add items to the action bar (Why again?)
 	}
 
 	@Override
@@ -73,9 +76,49 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 		case R.id.action_add_item:
 			addItemDialog();
 			return true;
+		case R.id.action_add_screen:
+			addScreenDialog();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void addScreenDialog() {
+		// TODO: Move strings to strings file
+		AlertDialog.Builder addScreen = new AlertDialog.Builder(this);
+		addScreen.setTitle("Add Screen");
+		final EditText screenName = new EditText(this);
+		screenName.setHint("Screen name");
+		addScreen.setMessage("Pick a Screen name");
+		addScreen.setView(screenName);
+		addScreen.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
+		addScreen.setPositiveButton("Ok",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						WorkspaceScreen newScreen = new WorkspaceScreen();
+						newScreen.setScreenID(application
+								.getWorkspaceScreenSize());
+						newScreen
+								.setScreenName(screenName.getText().toString());
+						application.addWorkspaceScreen(newScreen);
+
+						workspaceScreenAdapter = new SectionsPagerAdapter(
+								getSupportFragmentManager());
+						workspaceScreens.setAdapter(workspaceScreenAdapter);
+						if (workspaceScreenAdapter.getCount() > 1) {
+							workspaceScreens.setCurrentItem(1);
+						}
+					}
+				});
+		addScreen.show();
 	}
 
 	private void addItemDialog() {
