@@ -1,4 +1,4 @@
-package com.dympy.endless.home;
+package com.dympy.endless;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,9 +16,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
-import com.dympy.endless.home.apps.AppData;
-import com.dympy.endless.home.screen.Screen;
-import com.dympy.endless.home.screen.ScreenItem;
+import com.dympy.endless.apps.AppData;
+import com.dympy.endless.screen.Screen;
+import com.dympy.endless.screen.ScreenItem;
 
 public class LauncherModel extends Application {
 

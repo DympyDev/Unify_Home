@@ -1,13 +1,13 @@
-package com.dympy.endless.home.screen;
+package com.dympy.endless.screen;
 
 import java.util.ArrayList;
 
+import com.dympy.endless.LauncherModel;
 import com.dympy.endless.R;
-import com.dympy.endless.home.LauncherModel;
-import com.dympy.endless.home.apps.AppData;
-import com.dympy.endless.home.apps.AppDataAdapter;
-import com.dympy.endless.home.screen.ScreenItem.Type;
-import com.dympy.endless.home.ui.CustomGrid;
+import com.dympy.endless.apps.AppData;
+import com.dympy.endless.apps.AppDataAdapter;
+import com.dympy.endless.screen.ScreenItem.Type;
+import com.dympy.endless.ui.CustomGrid;
 
 import android.app.Activity;
 import android.app.AlertDialog;

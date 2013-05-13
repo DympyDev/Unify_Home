@@ -1,5 +1,5 @@
 
-package com.dympy.endless.home.apps;
+package com.dympy.endless.apps;
 
 import java.util.ArrayList;
 

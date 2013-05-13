@@ -39,12 +39,12 @@
         android:orientation="vertical" >
     </LinearLayout>
 
-    <com.dympy.endless.home.ui.CustomGrid
+    <com.dympy.endless.ui.CustomGrid
         android:id="@+id/item_workspace_grid_apps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:isScrollContainer="false"
         android:numColumns="@integer/workspace_app_columns" >
-    </com.dympy.endless.home.ui.CustomGrid>
+    </com.dympy.endless.ui.CustomGrid>
 
 </LinearLayout>

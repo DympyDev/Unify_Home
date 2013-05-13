@@ -1,7 +1,7 @@
-package com.dympy.endless.home.apps;
+package com.dympy.endless.apps;
 
+import com.dympy.endless.LauncherModel;
 import com.dympy.endless.R;
-import com.dympy.endless.home.LauncherModel;
 
 import android.os.Bundle;
 import android.view.MenuItem;

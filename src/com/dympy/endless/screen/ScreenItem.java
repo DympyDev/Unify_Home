@@ -1,8 +1,8 @@
-package com.dympy.endless.home.screen;
+package com.dympy.endless.screen;
 
 import java.util.ArrayList;
 
-import com.dympy.endless.home.apps.AppData;
+import com.dympy.endless.apps.AppData;
 
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetHostView;

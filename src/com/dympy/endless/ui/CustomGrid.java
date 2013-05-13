@@ -1,5 +1,5 @@
 
-package com.dympy.endless.home.ui;
+package com.dympy.endless.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;

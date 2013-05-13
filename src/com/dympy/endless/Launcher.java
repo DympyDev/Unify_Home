@@ -1,4 +1,4 @@
-package com.dympy.endless.home;
+package com.dympy.endless;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,10 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dympy.endless.R;
-import com.dympy.endless.home.apps.Drawer;
-import com.dympy.endless.home.screen.Screen;
-import com.dympy.endless.home.screen.ScreenItem;
-import com.dympy.endless.home.screen.ScreenItem.Type;
+import com.dympy.endless.apps.Drawer;
+import com.dympy.endless.screen.Screen;
+import com.dympy.endless.screen.ScreenItem;
+import com.dympy.endless.screen.ScreenItem.Type;
 
 public class Launcher extends FragmentActivity implements OnClickListener {
 

@@ -1,4 +1,4 @@
-package com.dympy.endless.home;
+package com.dympy.endless;
 
 import java.util.ArrayList;
 
@@ -9,10 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.dympy.endless.home.screen.Screen;
-import com.dympy.endless.home.screen.ScreenItem;
-import com.dympy.endless.home.screen.ScreenItem.Type;
-import com.dympy.endless.home.screen.ScreenItemApp;
+import com.dympy.endless.screen.Screen;
+import com.dympy.endless.screen.ScreenItem;
+import com.dympy.endless.screen.ScreenItemApp;
+import com.dympy.endless.screen.ScreenItem.Type;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 

@@ -1,9 +1,9 @@
-package com.dympy.endless.home.screen;
+package com.dympy.endless.screen;
 
 import java.util.ArrayList;
 
+import com.dympy.endless.LauncherModel;
 import com.dympy.endless.R;
-import com.dympy.endless.home.LauncherModel;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
