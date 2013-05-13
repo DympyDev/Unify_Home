@@ -186,10 +186,10 @@ public class LauncherModel extends Application {
 	}
 
 	public void removeScreenItem(ScreenItem item) {
-		screenArray.get(item.getScreenID()).removeItem(item);
+		screenArray.get(item.getScreenID() - 1).removeItem(item);
 		db.removeScreenItem(item);
 		// TODO: Change this?
-		screenArray.get(item.getScreenID()).refreshContent();
+		screenArray.get(item.getScreenID() - 1).refreshContent();
 	}
 
 	public void updateScreenItem(ScreenItem item) {

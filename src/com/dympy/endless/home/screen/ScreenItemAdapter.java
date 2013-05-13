@@ -279,11 +279,10 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						// TODO: Update ScreenItemApp
-						// app.renameItem(itemHolder.instance);
 						itemHolder.instance.setName(renameText.getText()
 								.toString());
 						itemHolder.title.setText(itemHolder.instance.getName());
+						app.updateScreenItem(itemHolder.instance);
 					}
 				});
 
@@ -292,8 +291,7 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-
+						// Canceled.
 					}
 				});
 
