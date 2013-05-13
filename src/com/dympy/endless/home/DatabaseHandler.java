@@ -9,13 +9,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.dympy.endless.home.apps.AppData;
-import com.dympy.endless.home.workspace.WorkspaceItem;
-import com.dympy.endless.home.workspace.WorkspaceScreen;
+import com.dympy.endless.home.screen.Screen;
+import com.dympy.endless.home.screen.ScreenItem;
+import com.dympy.endless.home.screen.ScreenItem.Type;
+import com.dympy.endless.home.screen.ScreenItemApp;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
 	private Context context;
+	private LauncherModel app;
 	// All Static variables
 	// Database version
 	private static final int DATABASE_VERSION = 1;
@@ -23,287 +25,305 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// Database name
 	private static final String DATABASE_NAME = "endlessDB.db";
 
-	// Table name constants
-	private static final String TABLE_WORKSPACE_SCREEN = "workspaceScreen";
-	private static final String TABLE_WORKSPACE_ITEM = "workspaceItem";
-	private static final String TABLE_APP_ITEM = "appItem";
+	/**
+	 * Screen Table, contents are defined in the following order:</br> Screen
+	 * ID, Screen Name, Screen Position
+	 */
+	private static final String TABLE_SCREEN = "screen";
+	/**
+	 * Screen Item Table, contents are defined in the following order:</br> Item
+	 * ID, Screen ID, Item Name, Item Type, Item Position
+	 */
+	private static final String TABLE_SCREEN_ITEM = "screenItem";
+	/**
+	 * Screen Item App Table, contents are defined in the following order:</br>
+	 * Item ID, App Name, App Package Name, App Activity Name, App Position
+	 */
+	private static final String TABLE_SCREEN_ITEM_APP = "screenItemApp";
 
-	// Workspace Screen Table Column names
-	private static final String KEY_SCREEN_ID = "screen_id";
-	private static final String KEY_SCREEN_NAME = "screen_name";
+	/** Screen ID, INTEGER PRIMARY KEY */
+	private static final String COL_SCREEN_ID = "screen_id";
+	/** Screen Name, TEXT */
+	private static final String COL_SCREEN_NAME = "screen_name";
+	/** Screen Position, INTEGER */
+	private static final String COL_SCREEN_POSITION = "screen_pos";
 
-	// Workspace Item Table Column names
-	private static final String KEY_ITEM_WORKSPACE_ID = "screen_id";
-	private static final String KEY_ITEM_NAME = "item_name";
-	private static final String KEY_ITEM_TYPE = "item_type";
+	/** Item ID, INTEGER PRIMARY KEY */
+	private static final String COL_ITEM_ID = "item_id";
+	/** Screen ID, INTEGER */
+	private static final String COL_ITEM_SCREEN = "screen_id";
+	/** Item Name, TEXT */
+	private static final String COL_ITEM_NAME = "item_name";
+	/** Item Type, INTEGER */
+	private static final String COL_ITEM_TYPE = "item_type";
+	/** Item Position, INTEGER */
+	private static final String COL_ITEM_POSITION = "item_pos";
 
-	// App Item Table Column names
-	private static final String KEY_APP_ITEM_NAME = "item_name";
-	private static final String KEY_APP_ITEM_SCREEN = "screen_id";
-	private static final String KEY_APP_NAME = "app_name";
-	private static final String KEY_APP_PACKAGE = "app_package";
-	private static final String KEY_APP_ACTIVITY = "app_activity";
+	/** Item ID, INTEGER */
+	private static final String COL_APP_ITEM = "item_id";
+	/** App Name, TEXT */
+	private static final String COL_APP_NAME = "app_name";
+	/** App Package Name, TEXT */
+	private static final String COL_APP_PACKAGE = "app_package";
+	/** App Activity Name, TEXT */
+	private static final String COL_APP_ACTIVITY = "app_activity";
+	/** App Position INTEGER */
+	private static final String COL_APP_POSITION = "app_pos";
 
 	public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		this.context = context;
+		app = (LauncherModel) context;
 	}
 
 	// Creating Tables
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// Create the Workspace Screen Table
-		String CREATE_SCREEN_TABLE = "CREATE TABLE " + TABLE_WORKSPACE_SCREEN
-				+ "(" + KEY_SCREEN_ID + " INTEGER PRIMARY KEY,"
-				+ KEY_SCREEN_NAME + " TEXT" + ")";
+		String CREATE_SCREEN_TABLE = "CREATE TABLE " + TABLE_SCREEN + "("
+				+ COL_SCREEN_ID + " INTEGER PRIMARY KEY," + COL_SCREEN_NAME
+				+ " TEXT, " + COL_SCREEN_POSITION + " INTEGER)";
 		db.execSQL(CREATE_SCREEN_TABLE);
 
 		// Create the Workspace Item Table
-		String CREATE_WORKSPACE_ITEM_TABLE = "CREATE TABLE "
-				+ TABLE_WORKSPACE_ITEM + "(" + KEY_ITEM_NAME + " TEXT,"
-				+ KEY_ITEM_WORKSPACE_ID + " INTEGER," + KEY_ITEM_TYPE
-				+ " INTEGER" + ")";
-		db.execSQL(CREATE_WORKSPACE_ITEM_TABLE);
+		String CREATE_SCREEN_ITEM_TABLE = "CREATE TABLE " + TABLE_SCREEN_ITEM
+				+ "(" + COL_ITEM_ID + " INTEGER PRIMARY KEY, "
+				+ COL_ITEM_SCREEN + " INTEGER, " + COL_ITEM_NAME + " TEXT, "
+				+ COL_ITEM_TYPE + " INTEGER, " + COL_ITEM_POSITION
+				+ " INTEGER)";
+		db.execSQL(CREATE_SCREEN_ITEM_TABLE);
 
 		// Create the App Item Table
-		String CREATE_APP_ITEM_TABLE = "CREATE TABLE " + TABLE_APP_ITEM + "("
-				+ KEY_APP_ITEM_NAME + " TEXT," + KEY_APP_ITEM_SCREEN + " TEXT,"
-				+ KEY_APP_NAME + " TEXT," + KEY_APP_PACKAGE + " TEXT,"
-				+ KEY_APP_ACTIVITY + " TEXT" + ")";
-		db.execSQL(CREATE_APP_ITEM_TABLE);
+		String CREATE_SCREEN_ITEM_APP_TABLE = "CREATE TABLE "
+				+ TABLE_SCREEN_ITEM_APP + "(" + COL_APP_ITEM + " INTEGER, "
+				+ COL_APP_NAME + " TEXT, " + COL_APP_PACKAGE + " TEXT, "
+				+ COL_APP_ACTIVITY + " TEXT," + COL_APP_POSITION + " INTEGER"
+				+ ")";
+		db.execSQL(CREATE_SCREEN_ITEM_APP_TABLE);
 	}
 
 	// Upgrading Database
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// Drop older tables if existed
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_WORKSPACE_SCREEN);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_WORKSPACE_ITEM);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_APP_ITEM);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCREEN);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCREEN_ITEM);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCREEN_ITEM_APP);
 
 		// Create tables again
 		onCreate(db);
 	}
 
-	/**
-	 * All CRUD(Create, Read, Update, Delete) Operations
+	/*
+	 * The Create functions
 	 */
-
-	void addWorkspaceScreen(int screenID, String screenName) {
+	public void addScreen(Screen screen) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(KEY_SCREEN_ID, screenID);
-		values.put(KEY_SCREEN_NAME, screenName);
+		values.put(COL_SCREEN_NAME, screen.getName());
+		values.put(COL_SCREEN_POSITION, screen.getPosition());
 
 		// Inserting Row
-		db.insert(TABLE_WORKSPACE_SCREEN, null, values);
-		db.close(); // Closing database connection
-	}
+		int screenID = (int) db.insert(TABLE_SCREEN, null, values);
+		Log.d("DB", "ScreenID: " + screenID);
+		screen.setScreenID(screenID);
 
-	void addWorkspaceScreen(WorkspaceScreen screen) {
-		SQLiteDatabase db = this.getWritableDatabase();
+		db.close();
 
-		ContentValues values = new ContentValues();
-		values.put(KEY_SCREEN_ID, screen.getScreenID());
-		values.put(KEY_SCREEN_NAME, screen.getScreenName());
-
-		// Inserting Row
-		db.insert(TABLE_WORKSPACE_SCREEN, null, values);
-		db.close(); // Closing database connection
-
-		// Add entries for all workspace items
-		for (int i = 0; i < screen.getItems().size(); i++) {
-			addWorkspaceItem(screen.getItems().get(i));
+		// Creating the table entries for the ScreenItems
+		for (ScreenItem item : screen.getItems()) {
+			item.setScreenID(screenID);
+			addScreenItem(item);
 		}
 	}
 
-	void addWorkspaceItem(WorkspaceItem item) {
+	public void addScreenItem(ScreenItem item) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(KEY_ITEM_NAME, item.getItemTitle());
-		values.put(KEY_ITEM_WORKSPACE_ID, item.getWorkspaceID());
-		values.put(KEY_ITEM_TYPE,
-				((item.getItemType() == WorkspaceItem.Type.APPS) ? 0 : 1));
+		values.put(COL_ITEM_SCREEN, item.getScreenID());
+		values.put(COL_ITEM_NAME, item.getName());
+		values.put(COL_ITEM_TYPE, (item.getType() == Type.APPS ? 0 : 1));
+		values.put(COL_ITEM_POSITION, item.getPosition());
 
 		// Inserting Row
-		db.insert(TABLE_WORKSPACE_ITEM, null, values);
-		db.close(); // Closing database connection
+		int itemID = (int) db.insert(TABLE_SCREEN_ITEM, null, values);
+		item.setItemID(itemID);
 
-		// Add entries for all apps
-		for (int i = 0; i < item.getApps().size(); i++) {
-			addAppItem(item.getWorkspaceID(), item.getItemTitle(), item
-					.getApps().get(i).getAppName(), item.getApps().get(i)
-					.getPackageName(), item.getApps().get(i).getActivityName());
+		db.close();
+
+		// Creating the table entries for the ScreenItemApps
+		for (ScreenItemApp app : item.getApps()) {
+			app.setItemID(itemID);
+			addScreenItemApp(app);
 		}
 	}
 
-	void addAppItem(int screenID, String itemName, String appName,
-			String packageName, String activityName) {
+	public void addScreenItemApp(ScreenItemApp app) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(KEY_APP_ITEM_NAME, itemName);
-		values.put(KEY_APP_ITEM_SCREEN, screenID);
-		values.put(KEY_APP_NAME, appName);
-		values.put(KEY_APP_PACKAGE, packageName);
-		values.put(KEY_APP_ACTIVITY, activityName);
+		values.put(COL_APP_ITEM, app.getItemID());
+		values.put(COL_APP_NAME, app.getName());
+		values.put(COL_APP_PACKAGE, app.getPackageName());
+		values.put(COL_APP_ACTIVITY, app.getActivityName());
+		values.put(COL_APP_POSITION, app.getPosition());
 
 		// Inserting Row
-		db.insert(TABLE_APP_ITEM, null, values);
+		db.insert(TABLE_SCREEN_ITEM_APP, null, values);
+
 		db.close();
 	}
 
 	/*
-	 * All the get functions
+	 * The Return functions
 	 */
-	public ArrayList<WorkspaceScreen> getWorkspaces() {
-		Log.d("DB", "Getting workspaces");
-		ArrayList<WorkspaceScreen> workspaces = new ArrayList<WorkspaceScreen>();
-		String selectQuery = "SELECT * FROM " + TABLE_WORKSPACE_SCREEN;
+	public ArrayList<Screen> getScreens() {
+		ArrayList<Screen> screenList = new ArrayList<Screen>();
+		String selectQuery = "SELECT * FROM " + TABLE_SCREEN;
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 
 		if (cursor.moveToFirst()) {
 			do {
-				Log.d("DB", "Adding a WorkspaceScreen");
-				WorkspaceScreen temp = new WorkspaceScreen();
-				temp.setScreenID(cursor.getInt(0));
-				temp.setScreenName(cursor.getString(1));
-				temp.setItems(getWorkspaceItems(temp.getScreenID()));
+				Screen screen = new Screen();
+				screen.setScreenID(cursor.getInt(0));
+				screen.setName(cursor.getString(1));
+				screen.setPosition(cursor.getInt(2));
+				screen.setItems(getScreenItems(screen.getScreenID()));
 
-				workspaces.add(temp);
+				screenList.add(screen);
 			} while (cursor.moveToNext());
 		}
-		return workspaces;
+		return screenList;
 	}
 
-	public ArrayList<WorkspaceItem> getWorkspaceItems(int screenID) {
-		ArrayList<WorkspaceItem> items = new ArrayList<WorkspaceItem>();
-
-		String selectQuery = "SELECT * FROM " + TABLE_WORKSPACE_ITEM
-				+ " WHERE " + KEY_ITEM_WORKSPACE_ID + "=" + screenID;
+	public ArrayList<ScreenItem> getScreenItems(int screenID) {
+		ArrayList<ScreenItem> screenItemList = new ArrayList<ScreenItem>();
+		String selectQuery = "SELECT * FROM " + TABLE_SCREEN_ITEM + " WHERE "
+				+ COL_ITEM_SCREEN + "=" + screenID;
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 
 		if (cursor.moveToFirst()) {
 			do {
-				WorkspaceItem temp = new WorkspaceItem(context);
-				temp.setItemTitle(cursor.getString(0));
-				temp.setWorkspaceID(screenID);
-				temp.setItemType((cursor.getInt(2) == 0) ? WorkspaceItem.Type.APPS
-						: WorkspaceItem.Type.WIDGET);
-				temp.setApps(getWorkspaceItemApps(screenID, cursor.getString(0)));
+				ScreenItem screenItem = new ScreenItem(context);
+				screenItem.setItemID(cursor.getInt(0));
+				screenItem.setScreenID(cursor.getInt(1));
+				screenItem.setName(cursor.getString(2));
+				screenItem.setType((cursor.getInt(3) == 0 ? Type.APPS
+						: Type.WIDGET));
+				screenItem.setPosition(cursor.getInt(4));
+				screenItem.setApps(getScreenItemApps(screenItem.getItemID()));
 
-				items.add(temp);
+				screenItemList.add(screenItem);
 			} while (cursor.moveToNext());
 		}
+		return screenItemList;
 
-		return items;
 	}
 
-	public ArrayList<AppData> getWorkspaceItemApps(int screenID, String itemName) {
-		ArrayList<AppData> packageList = new ArrayList<AppData>();
-
-		String selectQuery = "SELECT " + KEY_APP_PACKAGE + ", "
-				+ KEY_APP_ACTIVITY + " FROM " + TABLE_APP_ITEM + " WHERE "
-				+ KEY_APP_ITEM_NAME + "='" + itemName + "' AND "
-				+ KEY_APP_ITEM_SCREEN + "=" + screenID;
+	public ArrayList<ScreenItemApp> getScreenItemApps(int itemID) {
+		ArrayList<ScreenItemApp> itemAppList = new ArrayList<ScreenItemApp>();
+		String selectQuery = "SELECT * FROM " + TABLE_SCREEN_ITEM_APP
+				+ " WHERE " + COL_APP_ITEM + "=" + itemID;
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 
-		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
 			do {
-				packageList.add(((LauncherModel) context).getApp(
-						cursor.getString(0), cursor.getString(1)));
+				ScreenItemApp itemApp = new ScreenItemApp();
+				itemApp.setItemID(cursor.getInt(0));
+				itemApp.setName(cursor.getString(1));
+				itemApp.setPackageName(cursor.getString(2));
+				itemApp.setActivityName(cursor.getString(2));
+				itemApp.setPosition(cursor.getInt(4));
+				itemApp.setAppData(app.getApp(itemApp.getPackageName(),
+						itemApp.getActivityName()));
+
+				itemAppList.add(itemApp);
 			} while (cursor.moveToNext());
 		}
-
-		return packageList;
+		return itemAppList;
 	}
 
 	/*
-	 * public List<String> getWorkspaceItemApps(int screenID, String itemName) {
-	 * List<String> packageList = new ArrayList<String>();
-	 * 
-	 * String selectQuery = "SELECT " + KEY_APP_PACKAGE + " FROM " +
-	 * TABLE_APP_ITEM + " WHERE " + KEY_APP_ITEM_NAME + "='" + itemName +
-	 * "' AND " + KEY_APP_ITEM_SCREEN + "=" + screenID;
-	 * 
-	 * SQLiteDatabase db = this.getWritableDatabase(); Cursor cursor =
-	 * db.rawQuery(selectQuery, null);
-	 * 
-	 * // looping through all rows and adding to list if (cursor.moveToFirst())
-	 * { do { packageList.add(cursor.getString(0)); } while
-	 * (cursor.moveToNext()); }
-	 * 
-	 * return packageList; }
+	 * The Remove functions
 	 */
-
-	/*
-	 * All the remove functions
-	 */
-	public void deleteWorkspaceScreen(WorkspaceScreen screen) {
+	public void removeScreen(Screen screen) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_WORKSPACE_SCREEN,
-				KEY_SCREEN_ID + "=" + screen.getScreenID(), null);
-		db.close();
-		for (int i = 0; i < screen.getItems().size(); i++) {
-			deleteWorkspaceItem(screen.getItems().get(i));
+		db.delete(TABLE_SCREEN, COL_SCREEN_ID + " = ?",
+				new String[] { String.valueOf(screen.getScreenID()) });
+		for (ScreenItem item : screen.getItems()) {
+			removeScreenItem(item);
 		}
-	}
-
-	public void deleteWorkspaceItem(WorkspaceItem item) {
-		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_WORKSPACE_ITEM,
-				KEY_ITEM_NAME + "='" + item.getItemTitle() + "' AND "
-						+ KEY_ITEM_WORKSPACE_ID + "=" + item.getWorkspaceID(),
-				null);
 		db.close();
-		for (int i = 0; i < item.getApps().size(); i++) {
-			deleteAppItem(item.getWorkspaceID(), item.getItemTitle(), item
-					.getApps().get(i).getPackageName(), item.getApps().get(i)
-					.getAppName());
-		}
 	}
 
-	public void deleteAppItem(int screenID, String itemName,
-			String packageName, String appName) {
+	public void removeScreenItem(ScreenItem item) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(TABLE_APP_ITEM, KEY_APP_ITEM_SCREEN + "=" + screenID
-				+ " AND " + KEY_APP_ITEM_NAME + "='" + itemName + "' AND "
-				+ KEY_APP_NAME + "='" + appName + "' AND " + KEY_APP_PACKAGE
-				+ "='" + packageName + "'", null);
+		db.delete(TABLE_SCREEN_ITEM, COL_ITEM_ID + " = ?",
+				new String[] { String.valueOf(item.getItemID()) });
+		for (ScreenItemApp app : item.getApps()) {
+			removeScreenItemApp(app);
+		}
+		db.close();
+	}
+
+	public void removeScreenItemApp(ScreenItemApp app) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_SCREEN_ITEM_APP, COL_APP_ITEM + "=" + app.getItemID()
+				+ " AND " + COL_APP_PACKAGE + "='" + app.getPackageName()
+				+ "' AND " + COL_APP_ACTIVITY + "='" + app.getActivityName()
+				+ "'", null);
 		db.close();
 	}
 
 	/*
-	 * Update functions
+	 * The Update functions
 	 */
-	public void updateWorkspaceItemName(WorkspaceItem item, String newTitle) {
+	public void updateScreen(Screen screen) {
 		SQLiteDatabase db = this.getWritableDatabase();
+
 		ContentValues values = new ContentValues();
-		values.put(KEY_ITEM_NAME, newTitle);
-		db.update(TABLE_WORKSPACE_ITEM, values,
-				KEY_ITEM_NAME + "='" + item.getItemTitle() + "' AND "
-						+ KEY_ITEM_WORKSPACE_ID + "=" + item.getWorkspaceID(),
-				null);
-		if (item.getItemType() == WorkspaceItem.Type.APPS) {
-			for (int i = 0; i < item.getApps().size(); i++) {
-				ContentValues appValues = new ContentValues();
-				appValues.put(KEY_APP_ITEM_NAME, newTitle);
-				db.update(TABLE_APP_ITEM, appValues, KEY_APP_ITEM_NAME + "='"
-						+ item.getItemTitle() + "' AND " + KEY_APP_ITEM_SCREEN
-						+ "=" + item.getWorkspaceID(), null);
-			}
-		} else {
-			// A widget
-		}
+		values.put(COL_SCREEN_NAME, screen.getName());
+		values.put(COL_SCREEN_POSITION, screen.getPosition());
+
+		db.update(TABLE_SCREEN, values, COL_SCREEN_ID + " = ?",
+				new String[] { String.valueOf(screen.getScreenID()) });
+		db.close();
+	}
+
+	public void updateScreenItem(ScreenItem item) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(COL_ITEM_NAME, item.getName());
+		values.put(COL_ITEM_TYPE, (item.getType() == Type.APPS ? 0 : 1));
+		values.put(COL_ITEM_POSITION, item.getPosition());
+
+		db.update(TABLE_SCREEN_ITEM, values, COL_ITEM_ID + " = ?",
+				new String[] { String.valueOf(item.getItemID()) });
+		db.close();
+	}
+
+	public void updateAppItem(ScreenItemApp app) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(COL_ITEM_POSITION, app.getPosition());
+
+		db.update(
+				TABLE_SCREEN_ITEM_APP,
+				values,
+				COL_APP_ITEM + "=" + app.getItemID() + " AND "
+						+ COL_APP_PACKAGE + "='" + app.getPackageName()
+						+ "' AND " + COL_APP_ACTIVITY + "='"
+						+ app.getActivityName() + "'", null);
 		db.close();
 	}
 }

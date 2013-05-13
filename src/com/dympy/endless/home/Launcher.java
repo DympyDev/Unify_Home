@@ -24,13 +24,14 @@ import android.widget.Toast;
 
 import com.dympy.endless.R;
 import com.dympy.endless.home.apps.Drawer;
-import com.dympy.endless.home.workspace.WorkspaceItem;
-import com.dympy.endless.home.workspace.WorkspaceScreen;
+import com.dympy.endless.home.screen.Screen;
+import com.dympy.endless.home.screen.ScreenItem;
+import com.dympy.endless.home.screen.ScreenItem.Type;
 
 public class Launcher extends FragmentActivity implements OnClickListener {
 
-	private SectionsPagerAdapter workspaceScreenAdapter;
-	private ViewPager workspaceScreens;
+	private SectionsPagerAdapter screensAdapter;
+	private ViewPager screenPager;
 	private LauncherModel application;
 
 	private ImageButton allApps;
@@ -48,17 +49,16 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
 		application = (LauncherModel) getApplication();
 
-		workspaceScreenAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
+		screensAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		PagerTabStrip workspaceScreenTabs = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
 		workspaceScreenTabs.setTabIndicatorColor(0x3B3B3B);
 		workspaceScreenTabs.setDrawFullUnderline(true);
 
-		workspaceScreens = (ViewPager) findViewById(R.id.pager);
-		workspaceScreens.setAdapter(workspaceScreenAdapter);
-		if (workspaceScreenAdapter.getCount() > 1) {
-			workspaceScreens.setCurrentItem(1);
+		screenPager = (ViewPager) findViewById(R.id.pager);
+		screenPager.setAdapter(screensAdapter);
+		if (screensAdapter.getCount() > 1) {
+			screenPager.setCurrentItem(1);
 		}
 		initButtons();
 		// TODO: Lookup how to add items to the action bar (Why again?)
@@ -103,18 +103,16 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						WorkspaceScreen newScreen = new WorkspaceScreen();
-						newScreen.setScreenID(application
-								.getWorkspaceScreenSize());
-						newScreen
-								.setScreenName(screenName.getText().toString());
-						application.addWorkspaceScreen(newScreen);
+						Screen newScreen = new Screen();
+						newScreen.setName(screenName.getText().toString());
+						newScreen.setPosition(application.getScreenArraySize());
+						application.addScreen(newScreen);
 
-						workspaceScreenAdapter = new SectionsPagerAdapter(
+						screensAdapter = new SectionsPagerAdapter(
 								getSupportFragmentManager());
-						workspaceScreens.setAdapter(workspaceScreenAdapter);
-						if (workspaceScreenAdapter.getCount() > 1) {
-							workspaceScreens.setCurrentItem(1);
+						screenPager.setAdapter(screensAdapter);
+						if (screensAdapter.getCount() > 1) {
+							screenPager.setCurrentItem(1);
 						}
 					}
 				});
@@ -144,18 +142,19 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				ScreenItem tempItem = new ScreenItem(application);
+				tempItem.setName(itemName.getText().toString());
+				tempItem.setScreenID(screenPager.getCurrentItem());
+				tempItem.setPosition(0);// TODO: Change this value
 				switch (itemType.getCheckedRadioButtonId()) {
 				case R.id.dialog_add_item_app:
-					application.addItemToWorkspace(itemName.getText()
-							.toString(), WorkspaceItem.Type.APPS,
-							workspaceScreens.getCurrentItem());
+					tempItem.setType(Type.APPS);
 					break;
 				case R.id.dialog_add_item_widget:
-					application.addItemToWorkspace(itemName.getText()
-							.toString(), WorkspaceItem.Type.WIDGET,
-							workspaceScreens.getCurrentItem());
+					tempItem.setType(Type.WIDGET);
 					break;
 				}
+				application.addScreenItem(tempItem);
 			}
 		});
 		addItem.show();
@@ -219,7 +218,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 				fragment.setArguments(args);
 				return fragment;
 			default:
-				return application.getWorkspace(position - 1).getView();
+				return application.getScreen(position - 1).getView();
 
 			}
 		}
@@ -227,7 +226,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 		@Override
 		public int getCount() {
 			// We do a +1 because of the (now) static "Social" screen
-			return application.getWorkspaceScreenSize() + 1;
+			return application.getScreenArraySize() + 1;
 		}
 
 		@Override
@@ -236,7 +235,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 			case 0:
 				return getString(R.string.title_social);
 			default:
-				return application.getWorkspace(position - 1).getScreenName();
+				return application.getScreen(position - 1).getName();
 			}
 		}
 	}
