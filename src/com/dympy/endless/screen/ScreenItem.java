@@ -2,8 +2,6 @@ package com.dympy.endless.screen;
 
 import java.util.ArrayList;
 
-import com.dympy.endless.apps.AppData;
-
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
@@ -77,14 +75,6 @@ public class ScreenItem {
 
 	public ArrayList<ScreenItemApp> getApps() {
 		return apps;
-	}
-
-	public ArrayList<AppData> getAppDatas() {
-		ArrayList<AppData> appDatas = new ArrayList<AppData>();
-		for (ScreenItemApp app : apps) {
-			appDatas.add(app.getAppData());
-		}
-		return appDatas;
 	}
 
 	public void setApps(ArrayList<ScreenItemApp> apps) {

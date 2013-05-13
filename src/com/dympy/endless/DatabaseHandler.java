@@ -240,7 +240,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				itemApp.setItemID(cursor.getInt(0));
 				itemApp.setName(cursor.getString(1));
 				itemApp.setPackageName(cursor.getString(2));
-				itemApp.setActivityName(cursor.getString(2));
+				itemApp.setActivityName(cursor.getString(3));
 				itemApp.setPosition(cursor.getInt(4));
 				itemApp.setAppData(app.getApp(itemApp.getPackageName(),
 						itemApp.getActivityName()));

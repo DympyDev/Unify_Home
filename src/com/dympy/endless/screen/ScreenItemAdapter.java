@@ -2,22 +2,17 @@ package com.dympy.endless.screen;
 
 import java.util.ArrayList;
 
-import com.dympy.endless.LauncherModel;
-import com.dympy.endless.R;
-import com.dympy.endless.apps.AppData;
-import com.dympy.endless.apps.AppDataAdapter;
-import com.dympy.endless.screen.ScreenItem.Type;
-import com.dympy.endless.ui.CustomGrid;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -26,8 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
+
+import com.dympy.endless.LauncherModel;
+import com.dympy.endless.R;
+import com.dympy.endless.apps.AppData;
+import com.dympy.endless.apps.AppDataAdapter;
+import com.dympy.endless.screen.ScreenItem.Type;
+import com.dympy.endless.ui.CustomGrid;
 
 public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 	private Context context;
@@ -76,8 +76,8 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 		});
 
 		if (itemHolder.instance.getType() == Type.APPS) {
-			AppDataAdapter appsAdapter = new AppDataAdapter(context,
-					R.layout.list_item_app, itemHolder.instance.getAppDatas());
+			ItemAppAdapter appsAdapter = new ItemAppAdapter(context,
+					R.layout.list_item_app, itemHolder.instance.getApps());
 			itemHolder.appGrid.setExpanded(true);
 			itemHolder.appGrid.setAdapter(appsAdapter);
 			itemHolder.appGrid
@@ -90,8 +90,8 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 								longPressed = false;
 							} else {
 								context.startActivity(itemHolder.instance
-										.getAppDatas().get(position)
-										.getAppIntent());
+										.getApps().get(position).getAppData()
+										.getIntent());
 							}
 						}
 					});
@@ -181,11 +181,12 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 
 					@Override
 					public void onClick(DialogInterface dialog, int whichButton) {
-						String appName = itemHolder.instance.getAppDatas()
-								.get(appPos).getAppName();
-						// TODO: Remove ScreenItemApp
-						// app.removeAppFromItem(itemHolder.instance.getApps()
-						// .get(appPos));
+						String appName = itemHolder.instance.getApps()
+								.get(appPos).getName();
+						app.removeScreenItemApp(itemHolder.instance.getApps()
+								.get(appPos));
+						itemHolder.instance.removeApp(itemHolder.instance
+								.getApps().get(appPos));
 						resetContentView(itemHolder);
 						Toast.makeText(context, "Removed '" + appName + "'",
 								Toast.LENGTH_SHORT).show();
@@ -240,19 +241,25 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 			public void onItemClick(AdapterView<?> parent, View v,
 					int position, long id) {
 				listDialog.dismiss();
+				AppData addApp = app.getApps().get(position);
 				boolean shouldAdd = true;
-				for (AppData tempApp : itemHolder.instance.getAppDatas()) {
-					if (app.getApps().get(position).getPackageName() == tempApp
-							.getPackageName()
-							&& app.getApps().get(position).getActivityName() == tempApp
-									.getActivityName()) {
+				for (ScreenItemApp temp : itemHolder.instance.getApps()) {
+					if (addApp.getActivityName() == temp.getActivityName()
+							&& addApp.getPackageName() == temp.getPackageName()) {
 						shouldAdd = false;
 					}
 				}
 				if (shouldAdd) {
-					// TODO: Add ScreenItemApp
-					// app.addAppToItem(itemHolder.instance.getApps()
-					// .get(position));
+					ScreenItemApp temp = new ScreenItemApp();
+					temp.setItemID(itemHolder.instance.getItemID());
+					temp.setName(addApp.getName());
+					temp.setPackageName(addApp.getPackageName());
+					temp.setActivityName(addApp.getActivityName());
+					temp.setPosition(itemHolder.instance.getApps().size());
+					temp.setAppData(addApp);
+
+					app.addScreenItemApp(temp);
+					itemHolder.instance.addApp(temp);
 					resetContentView(itemHolder);
 				} else {
 					Toast.makeText(context,
@@ -300,8 +307,8 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 
 	private void resetContentView(ScreenItemHolder itemHolder) {
 		if (itemHolder.instance.getType() == Type.APPS) {
-			itemHolder.appGrid.setAdapter(new AppDataAdapter(context,
-					R.layout.list_item_app, itemHolder.instance.getAppDatas()));
+			itemHolder.appGrid.setAdapter(new ItemAppAdapter(context,
+					R.layout.list_item_app, itemHolder.instance.getApps()));
 		}
 	}
 }

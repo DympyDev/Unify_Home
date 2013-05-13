@@ -34,7 +34,7 @@ public class Drawer extends Activity {
 			public void onItemClick(AdapterView<?> parent, View v,
 					int position, long id) {
 				startActivity(application.getApps().get(position)
-						.getAppIntent());
+						.getIntent());
 
 			}
 		});

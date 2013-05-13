@@ -19,6 +19,7 @@ import android.content.pm.ResolveInfo;
 import com.dympy.endless.apps.AppData;
 import com.dympy.endless.screen.Screen;
 import com.dympy.endless.screen.ScreenItem;
+import com.dympy.endless.screen.ScreenItemApp;
 
 public class LauncherModel extends Application {
 
@@ -38,7 +39,8 @@ public class LauncherModel extends Application {
 		populateApps();
 		populateWidgets();
 
-		populateWorkspaces();
+		populateScreens();
+		// TODO: Sort screens and their content
 		// TODO: Add the broadcast receiver for new or removed apps
 
 		super.onCreate();
@@ -63,8 +65,8 @@ public class LauncherModel extends Application {
 						.addCategory(Intent.CATEGORY_LAUNCHER), 0);
 		for (ResolveInfo info : packages) {
 			AppData temp = new AppData();
-			temp.setAppName(info.loadLabel(pm).toString());
-			temp.setAppIcon(info.loadIcon(pm));
+			temp.setName(info.loadLabel(pm).toString());
+			temp.setIcon(info.loadIcon(pm));
 			temp.setPackageName(info.activityInfo.applicationInfo.packageName);
 			temp.setActivityName(info.activityInfo.name);
 
@@ -75,7 +77,7 @@ public class LauncherModel extends Application {
 			intent.setComponent(new ComponentName(
 					info.activityInfo.applicationInfo.packageName,
 					info.activityInfo.name));
-			temp.setAppIntent(intent);
+			temp.setIntent(intent);
 			addApp(temp);
 		}
 		sortApps();
@@ -88,10 +90,11 @@ public class LauncherModel extends Application {
 		sortWidgets();
 	}
 
-	private void populateWorkspaces() {
+	private void populateScreens() {
 		if (isFirstTime()) {
 			Screen mainScreen = new Screen();
 			mainScreen.setName("Main");
+			mainScreen.setPosition(0);
 
 			addScreen(mainScreen);
 		}
@@ -127,7 +130,7 @@ public class LauncherModel extends Application {
 		@SuppressLint("DefaultLocale")
 		@Override
 		public int compare(AppData o1, AppData o2) {
-			return (o1.getAppName().toLowerCase()).compareTo(o2.getAppName()
+			return (o1.getName().toLowerCase()).compareTo(o2.getName()
 					.toLowerCase());
 		}
 	}
@@ -163,6 +166,10 @@ public class LauncherModel extends Application {
 		return screenArray.size();
 	}
 
+	public int getScreenItemPosition(int screenID) {
+		return screenArray.get(screenID - 1).getItems().size();
+	}
+
 	public void addScreen(Screen temp) {
 		screenArray.add(temp);
 		db.addScreen(temp);
@@ -195,6 +202,20 @@ public class LauncherModel extends Application {
 	public void updateScreenItem(ScreenItem item) {
 		// TODO: Find the ScreenItem in the Screen array and update it's content
 		db.updateScreenItem(item);
+	}
+
+	/*
+	 * ScreenItemApp functions
+	 */
+
+	public void addScreenItemApp(ScreenItemApp app) {
+		// TODO: Add to the array
+		db.addScreenItemApp(app);
+	}
+
+	public void removeScreenItemApp(ScreenItemApp app) {
+		// TODO: Remove from the array
+		db.removeScreenItemApp(app);
 	}
 
 	/*

@@ -32,7 +32,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
 	private SectionsPagerAdapter screensAdapter;
 	private ViewPager screenPager;
-	private LauncherModel application;
+	private LauncherModel app;
 
 	private ImageButton allApps;
 	private ImageButton hotseat1;
@@ -47,7 +47,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_launcher);
 
-		application = (LauncherModel) getApplication();
+		app = (LauncherModel) getApplication();
 
 		screensAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -105,8 +105,8 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 					public void onClick(DialogInterface dialog, int which) {
 						Screen newScreen = new Screen();
 						newScreen.setName(screenName.getText().toString());
-						newScreen.setPosition(application.getScreenArraySize());
-						application.addScreen(newScreen);
+						newScreen.setPosition(app.getScreenArraySize());
+						app.addScreen(newScreen);
 
 						screensAdapter = new SectionsPagerAdapter(
 								getSupportFragmentManager());
@@ -142,10 +142,11 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				ScreenItem tempItem = new ScreenItem(application);
+				ScreenItem tempItem = new ScreenItem(app);
 				tempItem.setName(itemName.getText().toString());
 				tempItem.setScreenID(screenPager.getCurrentItem());
-				tempItem.setPosition(0);// TODO: Change this value
+				tempItem.setPosition(app.getScreenItemPosition(screenPager
+						.getCurrentItem()));
 				switch (itemType.getCheckedRadioButtonId()) {
 				case R.id.dialog_add_item_app:
 					tempItem.setType(Type.APPS);
@@ -154,7 +155,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 					tempItem.setType(Type.WIDGET);
 					break;
 				}
-				application.addScreenItem(tempItem);
+				app.addScreenItem(tempItem);
 			}
 		});
 		addItem.show();
@@ -218,7 +219,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 				fragment.setArguments(args);
 				return fragment;
 			default:
-				return application.getScreen(position - 1).getView();
+				return app.getScreen(position - 1).getView();
 
 			}
 		}
@@ -226,7 +227,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 		@Override
 		public int getCount() {
 			// We do a +1 because of the (now) static "Social" screen
-			return application.getScreenArraySize() + 1;
+			return app.getScreenArraySize() + 1;
 		}
 
 		@Override
@@ -235,7 +236,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 			case 0:
 				return getString(R.string.title_social);
 			default:
-				return application.getScreen(position - 1).getName();
+				return app.getScreen(position - 1).getName();
 			}
 		}
 	}

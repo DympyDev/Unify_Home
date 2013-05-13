@@ -5,31 +5,31 @@ import android.graphics.drawable.Drawable;
 
 public class AppData {
 
-	private String appName;
+	private String name;
 	private String packageName;
 	private String activityName;
 
-	private Intent appIntent;
-	private Drawable appIcon;
+	private Intent intent;
+	private Drawable icon;
 
 	public AppData() {
 
 	}
 
-	public AppData(String appName, String packageName, Intent appIntent,
-			Drawable appIcon) {
-		this.appName = appName;
+	public AppData(String name, String packageName, Intent intent,
+			Drawable icon) {
+		this.name = name;
 		this.packageName = packageName;
-		this.appIntent = appIntent;
-		this.appIcon = appIcon;
+		this.intent = intent;
+		this.icon = icon;
 	}
 
-	public String getAppName() {
-		return appName;
+	public String getName() {
+		return name;
 	}
 
-	public void setAppName(String appName) {
-		this.appName = appName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPackageName() {
@@ -48,19 +48,19 @@ public class AppData {
 		this.activityName = activityName;
 	}
 
-	public Intent getAppIntent() {
-		return appIntent;
+	public Intent getIntent() {
+		return intent;
 	}
 
-	public void setAppIntent(Intent appIntent) {
-		this.appIntent = appIntent;
+	public void setIntent(Intent intent) {
+		this.intent = intent;
 	}
 
-	public Drawable getAppIcon() {
-		return appIcon;
+	public Drawable getIcon() {
+		return icon;
 	}
 
-	public void setAppIcon(Drawable appIcon) {
-		this.appIcon = appIcon;
+	public void setIcon(Drawable icon) {
+		this.icon = icon;
 	}
 }
