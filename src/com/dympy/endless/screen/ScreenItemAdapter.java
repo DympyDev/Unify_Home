@@ -220,7 +220,6 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 		removeApp.show();
 	}
 
-	// TODO: Fix this
 	private void addAppDialog(final ScreenItemHolder itemHolder) {
 		// TODO: Move strings to strings file
 		final AlertDialog listDialog;

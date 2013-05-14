@@ -75,11 +75,16 @@ public class Screen {
 		return screenContent;
 	}
 
-	// TODO: Change this?
 	public void refreshContent() {
 		if (screenContent != null) {
 			screenContent.refreshContent();
 		}
+	}
+
+	public void updateContent(Screen screen) {
+		this.position = screen.getPosition();
+		this.name = screen.getName();
+		this.items = screen.getItems();
 	}
 
 	@SuppressLint("ValidFragment")

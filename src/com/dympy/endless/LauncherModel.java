@@ -41,6 +41,7 @@ public class LauncherModel extends Application {
 
 		populateScreens();
 		// TODO: Sort screens and their content
+
 		// TODO: Add the broadcast receiver for new or removed apps
 
 		super.onCreate();
@@ -175,9 +176,17 @@ public class LauncherModel extends Application {
 		db.addScreen(temp);
 	}
 
+	public void removeScreen(Screen temp) {
+		// TODO: Set position of other Screens
+		db.removeScreen(temp);
+	}
+
 	public void updateScreen(Screen temp) {
-		// TODO: Find the Screen in the Screen array and update the values that
-		// are different (position and name)
+		for (int i = 0; i < screenArray.size(); i++) {
+			if (screenArray.get(i).getScreenID() == temp.getScreenID()) {
+				screenArray.get(i).updateContent(temp);
+			}
+		}
 		db.updateScreen(temp);
 	}
 
@@ -188,19 +197,17 @@ public class LauncherModel extends Application {
 	public void addScreenItem(ScreenItem item) {
 		screenArray.get(item.getScreenID() - 1).addItem(item);
 		db.addScreenItem(item);
-		// TODO: Change this?
 		screenArray.get(item.getScreenID() - 1).refreshContent();
 	}
 
 	public void removeScreenItem(ScreenItem item) {
+		// TODO: Set position of other ScreenItems
 		screenArray.get(item.getScreenID() - 1).removeItem(item);
 		db.removeScreenItem(item);
-		// TODO: Change this?
 		screenArray.get(item.getScreenID() - 1).refreshContent();
 	}
 
 	public void updateScreenItem(ScreenItem item) {
-		// TODO: Find the ScreenItem in the Screen array and update it's content
 		db.updateScreenItem(item);
 	}
 
@@ -209,12 +216,10 @@ public class LauncherModel extends Application {
 	 */
 
 	public void addScreenItemApp(ScreenItemApp app) {
-		// TODO: Add to the array
 		db.addScreenItemApp(app);
 	}
 
 	public void removeScreenItemApp(ScreenItemApp app) {
-		// TODO: Remove from the array
 		db.removeScreenItemApp(app);
 	}
 

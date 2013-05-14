@@ -106,4 +106,15 @@ public class ScreenItem {
 		hostView.setAppWidget(appWidgetId, widget);
 		return hostView;
 	}
+
+	public void updateContent(ScreenItem item) {
+		this.name = item.getName();
+		this.position = item.getPosition();
+		this.type = item.getType();
+		if (item.getType() == Type.APPS) {
+			this.apps = item.getApps();
+		} else if (item.getType() == Type.WIDGET) {
+			this.widget = item.getWidget();
+		}
+	}
 }
