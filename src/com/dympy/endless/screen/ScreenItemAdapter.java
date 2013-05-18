@@ -1,11 +1,14 @@
 package com.dympy.endless.screen;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +25,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dympy.endless.LauncherModel;
+import com.dympy.endless.Launcher;
+import com.dympy.endless.LauncherApplication;
 import com.dympy.endless.R;
 import com.dympy.endless.apps.AppData;
 import com.dympy.endless.apps.AppDataAdapter;
@@ -30,284 +34,254 @@ import com.dympy.endless.screen.ScreenItem.Type;
 import com.dympy.endless.ui.CustomGrid;
 
 public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
-	private Context context;
-	private ArrayList<ScreenItem> data = null;
-	private LauncherModel app;
+    private Context context;
+    private ArrayList<ScreenItem> data = null;
+    private LauncherApplication app;
 
-	private boolean longPressed = false;
+    private boolean longPressed = false;
 
-	public ScreenItemAdapter(Context context, int layoutResourceId,
-			ArrayList<ScreenItem> data) {
-		super(context, layoutResourceId, data);
-		this.context = context;
-		app = (LauncherModel) context.getApplicationContext();
-		this.data = data;
-	}
+    public ScreenItemAdapter(Context context, int layoutResourceId, ArrayList<ScreenItem> data) {
+        super(context, layoutResourceId, data);
+        Log.d("ScreenItemAdapter", context.getClass().getName());
+        this.context = context;
+        app = (LauncherApplication) context.getApplicationContext();
+        this.data = data;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ScreenItem instance = data.get(position);
-		LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-		View row = inflater
-				.inflate(R.layout.list_item_workspace, parent, false);
-		ScreenItemHolder tempHolder = new ScreenItemHolder();
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ScreenItem instance = data.get(position);
+        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        View row = inflater.inflate(R.layout.list_item_workspace, parent, false);
+        ScreenItemHolder tempHolder = new ScreenItemHolder();
 
-		tempHolder.instance = instance;
-		tempHolder.title = (TextView) row
-				.findViewById(R.id.item_workspace_txt_title);
-		tempHolder.appGrid = (CustomGrid) row
-				.findViewById(R.id.item_workspace_grid_apps);
+        tempHolder.instance = instance;
+        tempHolder.title = (TextView) row.findViewById(R.id.item_workspace_txt_title);
+        tempHolder.appGrid = (CustomGrid) row.findViewById(R.id.item_workspace_grid_apps);
 
-		final ScreenItemHolder itemHolder = tempHolder;
+        final ScreenItemHolder itemHolder = tempHolder;
 
-		ImageButton itemViewSettings = (ImageButton) row
-				.findViewById(R.id.item_workspace_btn_settings);
-		LinearLayout widgetViewContent = (LinearLayout) row
-				.findViewById(R.id.item_workspace_layout_widget);
+        ImageButton itemViewSettings = (ImageButton) row.findViewById(R.id.item_workspace_btn_settings);
+        LinearLayout widgetViewContent = (LinearLayout) row.findViewById(R.id.item_workspace_layout_widget);
 
-		itemHolder.title.setText(itemHolder.instance.getName());
+        itemHolder.title.setText(itemHolder.instance.getName());
 
-		itemViewSettings.setOnClickListener(new OnClickListener() {
+        itemViewSettings.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				showSettingsDialog(itemHolder);
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                showSettingsDialog(itemHolder);
+            }
+        });
 
-		if (itemHolder.instance.getType() == Type.APPS) {
-			ItemAppAdapter appsAdapter = new ItemAppAdapter(context,
-					R.layout.list_item_app, itemHolder.instance.getApps());
-			itemHolder.appGrid.setExpanded(true);
-			itemHolder.appGrid.setAdapter(appsAdapter);
-			itemHolder.appGrid
-					.setOnItemClickListener(new OnItemClickListener() {
+        if (itemHolder.instance.getType() == Type.APPS) {
+            Collections.sort(itemHolder.instance.getApps(), new AppComparator());
+            ItemAppAdapter appsAdapter = new ItemAppAdapter(context, R.layout.list_item_app, itemHolder.instance.getApps());
+            itemHolder.appGrid.setExpanded(true);
+            itemHolder.appGrid.setAdapter(appsAdapter);
+            itemHolder.appGrid.setOnItemClickListener(new OnItemClickListener() {
 
-						@Override
-						public void onItemClick(AdapterView<?> parent, View v,
-								int position, long id) {
-							if (longPressed) {
-								longPressed = false;
-							} else {
-								context.startActivity(itemHolder.instance
-										.getApps().get(position).getAppData()
-										.getIntent());
-							}
-						}
-					});
-			itemHolder.appGrid
-					.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v,
+                                        int position, long id) {
+                    if (longPressed) {
+                        longPressed = false;
+                    } else {
+                        context.startActivity(itemHolder.instance.getApps().get(position).getAppData().getIntent());
+                    }
+                }
+            });
+            itemHolder.appGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-						@Override
-						public boolean onItemLongClick(AdapterView<?> parent,
-								View v, int position, long id) {
-							longPressed = true;
-							removeAppDialog(itemHolder, position);
-							return false;
-						}
-					});
-		} else if (itemHolder.instance.getType() == Type.WIDGET) {
-			widgetViewContent.addView(itemHolder.instance.getWidgetView());
-		}
-		return row;
-	}
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent,
+                                               View v, int position, long id) {
+                    longPressed = true;
+                    removeAppDialog(itemHolder, position);
+                    return false;
+                }
+            });
+        } else if (itemHolder.instance.getType() == Type.WIDGET) {
+            widgetViewContent.addView(itemHolder.instance.getWidgetView());
+        }
+        return row;
+    }
 
-	static class ScreenItemHolder {
-		ScreenItem instance;
-		TextView title;
-		CustomGrid appGrid;
-	}
+    public class AppComparator implements Comparator<ScreenItemApp> {
+        @Override
+        public int compare(ScreenItemApp screen, ScreenItemApp screen2) {
+            return screen.getPosition() > screen2.getPosition() ? +1 : screen.getPosition() < screen2.getPosition() ? -1 : 0;
+        }
+    }
 
-	private void showSettingsDialog(final ScreenItemHolder itemHolder) {
-		// TODO: Move strings to strings file
-		final AlertDialog actualDialog;
-		AlertDialog.Builder itemSettings = new AlertDialog.Builder(context);
-		itemSettings.setTitle("Item Settings");
+    static class ScreenItemHolder {
+        ScreenItem instance;
+        TextView title;
+        CustomGrid appGrid;
+    }
 
-		String[] settings = { "Add app", "Remove item", "Rename item" };
-		ListView settingsContent = new ListView(context);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
-				android.R.layout.simple_list_item_1, settings);
-		settingsContent.setAdapter(adapter);
+    private void showSettingsDialog(final ScreenItemHolder itemHolder) {
+        // TODO: Move strings to strings file
+        final AlertDialog actualDialog;
+        AlertDialog.Builder itemSettings = new AlertDialog.Builder(context);
+        itemSettings.setTitle("Item Settings");
 
-		itemSettings.setView(settingsContent);
-		itemSettings.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						// Canceled.
-					}
-				});
+        String[] settings = {"Add app", "Remove item", "Rename item"};
+        ListView settingsContent = new ListView(context);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, settings);
+        settingsContent.setAdapter(adapter);
 
-		actualDialog = itemSettings.create();
-		actualDialog.show();
-		settingsContent.setOnItemClickListener(new OnItemClickListener() {
+        itemSettings.setView(settingsContent);
+        itemSettings.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
-				actualDialog.dismiss();
-				switch (position) {
-				case 0: // Add app
-					addAppDialog(itemHolder);
-					break;
-				case 1: // Remove item
-					removeItemDialog(itemHolder);
-					break;
-				case 2: // Rename item
-					renameItemDialog(itemHolder);
-					break;
-				}
-			}
-		});
-	}
+        actualDialog = itemSettings.create();
+        actualDialog.show();
+        settingsContent.setOnItemClickListener(new OnItemClickListener() {
 
-	private void removeAppDialog(final ScreenItemHolder itemHolder,
-			final int appPos) {
-		// TODO: Move strings to strings file
-		AlertDialog.Builder removeApp = new AlertDialog.Builder(context);
-		removeApp.setTitle("Remove app");
-		removeApp
-				.setMessage("Are you sure you want to remove this app from the workspace?");
-		removeApp.setNegativeButton("No",
-				new DialogInterface.OnClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                actualDialog.dismiss();
+                switch (position) {
+                    case 0: // Add app
+                        addAppDialog(itemHolder);
+                        break;
+                    case 1: // Remove item
+                        removeItemDialog(itemHolder);
+                        break;
+                    case 2: // Rename item
+                        renameItemDialog(itemHolder);
+                        break;
+                }
+            }
+        });
+    }
 
-					@Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-						// Canceled.
-					}
-				});
-		removeApp.setPositiveButton("Yes",
-				new DialogInterface.OnClickListener() {
+    private void removeAppDialog(final ScreenItemHolder itemHolder, final int appPos) {
+        // TODO: Move strings to strings file
+        AlertDialog.Builder removeApp = new AlertDialog.Builder(context);
+        removeApp.setTitle("Remove app");
+        removeApp.setMessage("Are you sure you want to remove this app from the workspace?");
+        removeApp.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-						String appName = itemHolder.instance.getApps()
-								.get(appPos).getName();
-						app.removeScreenItemApp(itemHolder.instance.getApps()
-								.get(appPos));
-						itemHolder.instance.removeApp(itemHolder.instance
-								.getApps().get(appPos));
-						resetContentView(itemHolder);
-						Toast.makeText(context, "Removed '" + appName + "'",
-								Toast.LENGTH_SHORT).show();
-					}
-				});
-		removeApp.show();
-	}
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        removeApp.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
-	private void removeItemDialog(final ScreenItemHolder itemHolder) {
-		// TODO: Move strings to strings file
-		AlertDialog.Builder removeApp = new AlertDialog.Builder(context);
-		removeApp.setTitle("Remove item");
-		removeApp
-				.setMessage("Are you sure you want to remove this item from the workspace screen?");
-		removeApp.setNegativeButton("No",
-				new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String appName = itemHolder.instance.getApps().get(appPos).getName();
+                app.removeScreenItemApp(itemHolder.instance.getApps().get(appPos));
+                itemHolder.instance.removeApp(itemHolder.instance.getApps().get(appPos));
+                ((Launcher) context).updatePager();
+                Toast.makeText(context, "Removed '" + appName + "'", Toast.LENGTH_SHORT).show();
+            }
+        });
+        removeApp.show();
+    }
 
-					@Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-						// Canceled.
-					}
-				});
-		removeApp.setPositiveButton("Yes",
-				new DialogInterface.OnClickListener() {
+    private void removeItemDialog(final ScreenItemHolder itemHolder) {
+        // TODO: Move strings to strings file
+        AlertDialog.Builder removeApp = new AlertDialog.Builder(context);
+        removeApp.setTitle("Remove item");
+        removeApp.setMessage("Are you sure you want to remove this item from the workspace screen?");
+        removeApp.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-						app.removeScreenItem(itemHolder.instance);
-					}
-				});
-		removeApp.show();
-	}
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        removeApp.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
-	private void addAppDialog(final ScreenItemHolder itemHolder) {
-		// TODO: Move strings to strings file
-		final AlertDialog listDialog;
-		AlertDialog.Builder listBuilder = new AlertDialog.Builder(context);
-		listBuilder.setTitle("Select an app");
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                app.removeScreenItem(itemHolder.instance);
+                ((Launcher) context).updatePager();
+            }
+        });
+        removeApp.show();
+    }
 
-		GridView appGrid = new GridView(context);
-		appGrid.setNumColumns(3);
-		AppDataAdapter gridAdapter = new AppDataAdapter(context,
-				R.layout.list_item_app, app.getApps());
-		appGrid.setAdapter(gridAdapter);
-		listBuilder.setView(appGrid);
-		listDialog = listBuilder.create();
+    private void addAppDialog(final ScreenItemHolder itemHolder) {
+        // TODO: Move strings to strings file
+        final AlertDialog listDialog;
+        AlertDialog.Builder listBuilder = new AlertDialog.Builder(context);
+        listBuilder.setTitle("Select an app");
 
-		appGrid.setOnItemClickListener(new OnItemClickListener() {
+        GridView appGrid = new GridView(context);
+        appGrid.setNumColumns(3);
+        AppDataAdapter gridAdapter = new AppDataAdapter(context, R.layout.list_item_app, app.getApps());
+        appGrid.setAdapter(gridAdapter);
+        listBuilder.setView(appGrid);
+        listDialog = listBuilder.create();
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
-				listDialog.dismiss();
-				AppData addApp = app.getApps().get(position);
-				boolean shouldAdd = true;
-				for (ScreenItemApp temp : itemHolder.instance.getApps()) {
-					if (addApp.getActivityName() == temp.getActivityName()
-							&& addApp.getPackageName() == temp.getPackageName()) {
-						shouldAdd = false;
-					}
-				}
-				if (shouldAdd) {
-					ScreenItemApp temp = new ScreenItemApp();
-					temp.setItemID(itemHolder.instance.getItemID());
-					temp.setName(addApp.getName());
-					temp.setPackageName(addApp.getPackageName());
-					temp.setActivityName(addApp.getActivityName());
-					temp.setPosition(itemHolder.instance.getApps().size());
-					temp.setAppData(addApp);
+        appGrid.setOnItemClickListener(new OnItemClickListener() {
 
-					app.addScreenItemApp(temp);
-					itemHolder.instance.addApp(temp);
-					resetContentView(itemHolder);
-				} else {
-					Toast.makeText(context,
-							"You already have this app in this Item.",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                listDialog.dismiss();
+                AppData addApp = app.getApps().get(position);
+                boolean shouldAdd = true;
+                for (ScreenItemApp temp : itemHolder.instance.getApps()) {
+                    if (addApp.getActivityName() == temp.getActivityName() && addApp.getPackageName() == temp.getPackageName()) {
+                        shouldAdd = false;
+                    }
+                }
+                if (shouldAdd) {
+                    ScreenItemApp temp = new ScreenItemApp();
+                    temp.setItemID(itemHolder.instance.getItemID());
+                    temp.setName(addApp.getName());
+                    temp.setPackageName(addApp.getPackageName());
+                    temp.setActivityName(addApp.getActivityName());
+                    temp.setPosition(itemHolder.instance.getApps().size());
+                    temp.setAppData(addApp);
 
-		listDialog.show();
-	}
+                    app.addScreenItemApp(temp);
+                    itemHolder.instance.addApp(temp);
+                    ((Launcher) context).updatePager();
+                } else {
+                    Toast.makeText(context, "You already have this app in this Item.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-	private void renameItemDialog(final ScreenItemHolder itemHolder) {
-		// TODO: Move strings to strings file
-		AlertDialog.Builder listDialog = new AlertDialog.Builder(context);
-		listDialog.setTitle("Rename item");
-		listDialog.setMessage("Change the item title");
+        listDialog.show();
+    }
 
-		final EditText renameText = new EditText(context);
-		renameText.setText(itemHolder.instance.getName());
-		listDialog.setView(renameText);
-		listDialog.setPositiveButton("Ok",
-				new DialogInterface.OnClickListener() {
+    private void renameItemDialog(final ScreenItemHolder itemHolder) {
+        // TODO: Move strings to strings file
+        AlertDialog.Builder listDialog = new AlertDialog.Builder(context);
+        listDialog.setTitle("Rename item");
+        listDialog.setMessage("Change the item title");
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						itemHolder.instance.setName(renameText.getText()
-								.toString());
-						itemHolder.title.setText(itemHolder.instance.getName());
-						app.updateScreenItem(itemHolder.instance);
-					}
-				});
+        final EditText renameText = new EditText(context);
+        renameText.setText(itemHolder.instance.getName());
+        listDialog.setView(renameText);
+        listDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 
-		listDialog.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                itemHolder.instance.setName(renameText.getText().toString());
+                itemHolder.title.setText(itemHolder.instance.getName());
+                app.updateScreenItem(itemHolder.instance);
+            }
+        });
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// Canceled.
-					}
-				});
+        listDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
-		listDialog.show();
-	}
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Canceled.
+            }
+        });
 
-	private void resetContentView(ScreenItemHolder itemHolder) {
-		if (itemHolder.instance.getType() == Type.APPS) {
-			itemHolder.appGrid.setAdapter(new ItemAppAdapter(context,
-					R.layout.list_item_app, itemHolder.instance.getApps()));
-		}
-	}
+        listDialog.show();
+    }
 }

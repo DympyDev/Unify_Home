@@ -1,6 +1,6 @@
 package com.dympy.endless.apps;
 
-import com.dympy.endless.LauncherModel;
+import com.dympy.endless.LauncherApplication;
 import com.dympy.endless.R;
 
 import android.os.Bundle;
@@ -12,13 +12,13 @@ import android.widget.GridView;
 import android.app.Activity;
 
 public class Drawer extends Activity {
-	private LauncherModel application;
+	private LauncherApplication application;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_drawer);
-		application = (LauncherModel) getApplication();
+		application = (LauncherApplication) getApplication();
 
 		if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			getActionBar().setDisplayHomeAsUpEnabled(true);

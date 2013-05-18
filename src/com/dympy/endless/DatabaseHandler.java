@@ -17,7 +17,7 @@ import com.dympy.endless.screen.ScreenItem.Type;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
 	private Context context;
-	private LauncherModel app;
+	private LauncherApplication app;
 	// All Static variables
 	// Database version
 	private static final int DATABASE_VERSION = 1;
@@ -73,7 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		this.context = context;
-		app = (LauncherModel) context;
+		app = (LauncherApplication) context;
 	}
 
 	// Creating Tables

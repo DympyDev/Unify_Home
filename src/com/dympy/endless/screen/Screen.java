@@ -2,7 +2,7 @@ package com.dympy.endless.screen;
 
 import java.util.ArrayList;
 
-import com.dympy.endless.LauncherModel;
+import com.dympy.endless.LauncherApplication;
 import com.dympy.endless.R;
 
 import android.annotation.SuppressLint;
@@ -16,132 +16,118 @@ import android.widget.TextView;
 
 public class Screen {
 
-	private int screenID;
-	private String name;
-	private int position;
-	private ArrayList<ScreenItem> items;
-	private ScreenFragment screenContent;
+    private int screenID;
+    private String name;
+    private int position;
+    private ArrayList<ScreenItem> items;
+    private ScreenFragment screenContent;
 
-	public Screen() {
-		items = new ArrayList<ScreenItem>();
-		screenContent = null;
-	}
+    public Screen() {
+        items = new ArrayList<ScreenItem>();
+        screenContent = null;
+    }
 
-	public int getScreenID() {
-		return screenID;
-	}
+    public int getScreenID() {
+        return screenID;
+    }
 
-	public void setScreenID(int screenID) {
-		this.screenID = screenID;
-	}
+    public void setScreenID(int screenID) {
+        this.screenID = screenID;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public int getPosition() {
-		return position;
-	}
+    public int getPosition() {
+        return position;
+    }
 
-	public void setPosition(int position) {
-		this.position = position;
-	}
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
-	public ArrayList<ScreenItem> getItems() {
-		return items;
-	}
+    public ArrayList<ScreenItem> getItems() {
+        return items;
+    }
 
-	public void setItems(ArrayList<ScreenItem> items) {
-		this.items = items;
-	}
+    public void setItems(ArrayList<ScreenItem> items) {
+        this.items = items;
+    }
 
-	public void addItem(ScreenItem item) {
-		this.items.add(item);
-	}
+    public void addItem(ScreenItem item) {
+        this.items.add(item);
+    }
 
-	public void removeItem(ScreenItem item) {
-		this.items.remove(item);
-	}
+    public void removeItem(ScreenItem item) {
+        this.items.remove(item);
+    }
 
-	public Fragment getView() {
-		if (screenContent == null) {
-			screenContent = new ScreenFragment();
-			screenContent.setWorkspaceID(getScreenID());
-		}
-		return screenContent;
-	}
+    public Fragment getView() {
+        if (screenContent == null) {
+            screenContent = new ScreenFragment();
+            screenContent.setWorkspaceID(getScreenID());
+        }
+        return screenContent;
+    }
 
-	public void refreshContent() {
-		if (screenContent != null) {
-			screenContent.refreshContent();
-		}
-	}
+    public void refreshContent() {
+        if (screenContent != null) {
+            screenContent.refreshContent();
+        }
+    }
 
-	public void updateContent(Screen screen) {
-		this.position = screen.getPosition();
-		this.name = screen.getName();
-		this.items = screen.getItems();
-	}
+    public void updateContent(Screen screen) {
+        this.position = screen.getPosition();
+        this.name = screen.getName();
+        this.items = screen.getItems();
+    }
 
-	@SuppressLint("ValidFragment")
-	private class ScreenFragment extends Fragment {
-		private int workspaceID = 0;
-		private LauncherModel application;
+    @SuppressLint("ValidFragment")
+    private class ScreenFragment extends Fragment {
+        private int workspaceID = 0;
+        private LauncherApplication application;
 
-		public ScreenFragment() {
-		}
+        public ScreenFragment() {
+        }
 
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			application = (LauncherModel) getActivity().getApplication();
-			View rootView = inflater.inflate(R.layout.fragment_workspace,
-					container, false);
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            application = (LauncherApplication) getActivity().getApplication();
+            View rootView = inflater.inflate(R.layout.fragment_workspace, container, false);
 
-			TextView paddingTop = new TextView(this.getActivity());
-			paddingTop.setHeight(getResources().getDimensionPixelOffset(
-					R.dimen.workspace_padding_top));
-			TextView paddingBottom = new TextView(this.getActivity());
-			paddingBottom.setHeight(getResources().getDimensionPixelOffset(
-					R.dimen.workspace_padding_bottom));
+            TextView paddingBottom = new TextView(this.getActivity());
+            paddingBottom.setHeight(getResources().getDimensionPixelOffset(R.dimen.workspace_padding_bottom));
 
-			ListView workspaceItems = (ListView) rootView
-					.findViewById(R.id.fragment_workspace_list);
+            ListView workspaceItems = (ListView) rootView.findViewById(R.id.fragment_workspace_list);
 
-			Screen items = application.getScreen(workspaceID - 1);
-			ScreenItemAdapter workspaceAdapter = new ScreenItemAdapter(
-					this.getActivity(), R.layout.list_item_workspace,
-					items.getItems());
+            Screen items = application.getScreen(workspaceID);
+            ScreenItemAdapter workspaceAdapter = new ScreenItemAdapter(this.getActivity(), R.layout.list_item_workspace, items.getItems());
 
-			workspaceItems.addHeaderView(paddingTop);
-			workspaceItems.addFooterView(paddingBottom);
+            workspaceItems.addFooterView(paddingBottom);
 
-			workspaceItems.setAdapter(workspaceAdapter);
-			return rootView;
-		}
+            workspaceItems.setAdapter(workspaceAdapter);
+            return rootView;
+        }
 
-		public void setWorkspaceID(int id) {
-			this.workspaceID = id;
-		}
+        public void setWorkspaceID(int id) {
+            this.workspaceID = id;
+        }
 
-		// TODO: Change this so it takes a boolean (add or remove) and a
-		// WorkspaceItem so we can update the adapter
-		public void refreshContent() {
-			ListView workspaceItems = (ListView) getView().findViewById(
-					R.id.fragment_workspace_list);
+        // TODO: Change this so it takes a boolean (add or remove) and a WorkspaceItem so we can update the adapter
+        public void refreshContent() {
+            ListView workspaceItems = (ListView) getView().findViewById(R.id.fragment_workspace_list);
 
-			Screen items = application.getScreen(workspaceID - 1);
-			ScreenItemAdapter workspaceAdapter = new ScreenItemAdapter(
-					this.getActivity(), R.layout.list_item_workspace,
-					items.getItems());
+            Screen items = application.getScreenByPosition(workspaceID - 1);
+            ScreenItemAdapter workspaceAdapter = new ScreenItemAdapter(this.getActivity(), R.layout.list_item_workspace, items.getItems());
 
-			workspaceItems.setAdapter(workspaceAdapter);
-		}
+            workspaceItems.setAdapter(workspaceAdapter);
+        }
 
-	}
+    }
 
 }
