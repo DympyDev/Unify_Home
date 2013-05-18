@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Endless</string>
     <string name="action_settings">Preferences</string>
-    <string name="action_addscreen">Add Screen</string>
-    <string name="action_additem">Add Item</string>
+    <string name="action_add_screen">Add Screen</string>
+    <string name="action_add_item">Add Item</string>
     <string name="title_social">Social</string>
     <string name="title_activity_drawer">Apps</string>
     <string name="add_item_input">Item name</string>
     <string name="add_item_radio_app">Apps</string>
     <string name="add_item_radio_widget">Widget</string>
     <string name="add_item_radio_hint">What will you add in this Workspace Item?</string>
-    <string name="action_removescreen">Remove Current Screen</string>
-
+    <string name="action_remove_screen">Remove Current Screen</string>
+    <string name="action_add">Add</string>
+    <string name="action_rename_screen">Rename Current Screen</string>
+    <string name="action_rearrange_items">Rearrange Items</string>
+    <string name="action_rearrange_screens">Rearrange Screens</string>
+    <string name="action_rearrange">Rearrange</string>
 </resources>

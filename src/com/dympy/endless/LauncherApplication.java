@@ -21,7 +21,7 @@ import com.dympy.endless.screen.Screen;
 import com.dympy.endless.screen.ScreenItem;
 import com.dympy.endless.screen.ScreenItemApp;
 
-public class LauncherModel extends Application {
+public class LauncherApplication extends Application {
 
 	// private static String TAG = "LAUNCHERMODEL_DEBUG";
 

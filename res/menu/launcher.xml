@@ -1,24 +1,46 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item
-        android:id="@+id/action_add_screen"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_addscreen"/>
-    <item
         android:id="@+id/action_remove_screen"
-        android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_removescreen"/>
+        android:title="@string/action_remove_screen"/>
     <item
-        android:id="@+id/action_add_item"
-        android:orderInCategory="100"
+        android:id="@+id/action_rename_screen"
         android:showAsAction="never"
-        android:title="@string/action_additem"/>
-
+        android:title="@string/action_rename_screen"/>
+    <item
+        android:id="@+id/action_rearrange"
+        android:showAsAction="always|withText"
+        android:title="@string/action_rearrange"
+        android:icon="@android:drawable/ic_menu_sort_by_size">
+        <menu>
+            <item
+                android:id="@+id/action_rearrange_screens"
+                android:showAsAction="never"
+                android:title="@string/action_rearrange_screens"/>
+            <item
+                android:id="@+id/action_rearrange_items"
+                android:showAsAction="never"
+                android:title="@string/action_rearrange_items"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/action_add"
+        android:showAsAction="always|withText"
+        android:title="@string/action_add"
+        android:icon="@android:drawable/ic_menu_add">
+        <menu>
+            <item
+                android:id="@+id/action_add_item"
+                android:showAsAction="never"
+                android:title="@string/action_add_item"/>
+            <item
+                android:id="@+id/action_add_screen"
+                android:showAsAction="never"
+                android:title="@string/action_add_screen"/>
+        </menu>
+    </item>
 </menu>
