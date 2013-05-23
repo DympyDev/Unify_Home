@@ -13,7 +13,7 @@
         android:drawableTop="@drawable/ic_launcher"
         android:gravity="center_horizontal"
         android:singleLine="false"
-        android:text="@string/app_name"
+        android:text="@string/title_app"
         android:textAppearance="@style/DefaultTextStyle.AppFont" />
 
 </LinearLayout>

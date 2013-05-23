@@ -17,7 +17,6 @@ import com.dympy.endless.screen.ScreenItem.Type;
 
 public class Launcher extends FragmentActivity implements OnClickListener {
 
-    private SectionsPagerAdapter screensAdapter;
     private ViewPager screenPager;
     private LauncherApplication app;
 
@@ -28,7 +27,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
         app = (LauncherApplication) getApplication();
 
-        screensAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter screensAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         PagerTabStrip workspaceScreenTabs = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
         workspaceScreenTabs.setTabIndicatorColor(0x3B3B3B);
@@ -40,7 +39,6 @@ public class Launcher extends FragmentActivity implements OnClickListener {
             screenPager.setCurrentItem(1);
         }
         initButtons();
-        // TODO: Lookup how to add items to the action bar (Why again?)
     }
 
     @Override
@@ -61,6 +59,10 @@ public class Launcher extends FragmentActivity implements OnClickListener {
             case R.id.action_remove_screen:
                 removeScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
                 return true;
+            case R.id.action_change_wallpaper:
+                Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
+                startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -71,20 +73,19 @@ public class Launcher extends FragmentActivity implements OnClickListener {
     }
 
     private void addScreenDialog() {
-        // TODO: Move strings to strings file
         AlertDialog.Builder addScreen = new AlertDialog.Builder(this);
-        addScreen.setTitle("Add Screen");
+        addScreen.setTitle(getString(R.string.dialog_add_screen_title));
         final EditText screenName = new EditText(this);
-        screenName.setHint("Screen name");
-        addScreen.setMessage("Pick a Screen name");
+        screenName.setHint(getString(R.string.dialog_add_screen_edit_hint));
+        addScreen.setMessage(getString(R.string.dialog_add_screen_message));
         addScreen.setView(screenName);
-        addScreen.setNegativeButton("Cancel",
+        addScreen.setNegativeButton(getString(R.string.dialog_btn_cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Canceled.
                     }
                 });
-        addScreen.setPositiveButton("Ok",
+        addScreen.setPositiveButton(getString(R.string.dialog_btn_ok),
                 new DialogInterface.OnClickListener() {
 
                     @Override
@@ -100,25 +101,24 @@ public class Launcher extends FragmentActivity implements OnClickListener {
     }
 
     private void addItemDialog() {
-        // TODO: Move strings to strings file
         AlertDialog.Builder addItem = new AlertDialog.Builder(this);
-        addItem.setTitle("Add Item");
+        addItem.setTitle(getString(R.string.dialog_add_item_title));
 
         LayoutInflater inflater = getLayoutInflater();
-        View dialoglayout = inflater.inflate(R.layout.dialog_add_item, null);
-        final EditText itemName = (EditText) dialoglayout
+        View dialogLayout = inflater.inflate(R.layout.dialog_add_item, null);
+        final EditText itemName = (EditText) dialogLayout
                 .findViewById(R.id.dialog_add_item_input);
-        final RadioGroup itemType = (RadioGroup) dialoglayout
+        final RadioGroup itemType = (RadioGroup) dialogLayout
                 .findViewById(R.id.dialog_add_item_radiogroup);
 
-        addItem.setView(dialoglayout);
-        addItem.setNegativeButton("Cancel",
+        addItem.setView(dialogLayout);
+        addItem.setNegativeButton(getString(R.string.dialog_btn_cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Canceled.
                     }
                 });
-        addItem.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        addItem.setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -143,11 +143,10 @@ public class Launcher extends FragmentActivity implements OnClickListener {
     }
 
     public void removeScreen(final Screen screen) {
-        // TODO: Move strings to strings file
         AlertDialog.Builder removeScreen = new AlertDialog.Builder(this);
-        removeScreen.setTitle("Remove Screen");
-        removeScreen.setMessage("Are you sure you want to remove this Screen?");
-        removeScreen.setNegativeButton("No",
+        removeScreen.setTitle(getString(R.string.dialog_remove_screen_title));
+        removeScreen.setMessage(getString(R.string.dialog_remove_screen_message));
+        removeScreen.setNegativeButton(getString(R.string.dialog_btn_no),
                 new DialogInterface.OnClickListener() {
 
                     @Override
@@ -155,7 +154,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
                         // Canceled.
                     }
                 });
-        removeScreen.setPositiveButton("Yes",
+        removeScreen.setPositiveButton(getString(R.string.dialog_btn_yes),
                 new DialogInterface.OnClickListener() {
 
                     @Override

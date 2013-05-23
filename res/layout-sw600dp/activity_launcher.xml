@@ -35,7 +35,7 @@
             android:layout_height="75dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -44,7 +44,7 @@
             android:layout_height="75dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -53,7 +53,7 @@
             android:layout_height="75dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -62,7 +62,7 @@
             android:layout_height="75dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_apps" />
 
         <ImageButton
@@ -71,7 +71,7 @@
             android:layout_height="75dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -80,7 +80,7 @@
             android:layout_height="75dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -89,7 +89,7 @@
             android:layout_height="75dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
     </LinearLayout>
 

@@ -1,11 +1,12 @@
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+<GridView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/BackgroundColor"
     android:id="@+id/activity_drawer_appgrid"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:numColumns="@integer/drawer_app_columns"
     android:scrollbars="none"
     tools:context=".Drawer"
-    tools:listitem="@layout/list_item_app" >
-
+    tools:listitem="@layout/list_item_app">
 </GridView>

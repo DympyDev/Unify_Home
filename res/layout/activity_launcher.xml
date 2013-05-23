@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/Grey.Light.Transparent"
         android:minHeight="60dp"
         android:weightSum="5" >
 
@@ -36,7 +35,7 @@
             android:layout_height="60dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -45,7 +44,7 @@
             android:layout_height="60dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -54,7 +53,7 @@
             android:layout_height="60dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_apps" />
 
         <ImageButton
@@ -63,7 +62,7 @@
             android:layout_height="60dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
         <ImageButton
@@ -72,7 +71,7 @@
             android:layout_height="60dip"
             android:layout_weight="1"
             android:background="@drawable/btn_dock"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/title_app"
             android:src="@drawable/ic_add" />
 
     </LinearLayout>

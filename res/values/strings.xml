@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Endless</string>
-    <string name="action_settings">Preferences</string>
+    <!-- Titles -->
+    <string name="title_app">Endless</string>
+    <string name="title_social">Social</string>
+    <string name="title_drawer">Apps</string>
+
+    <!-- Menu Items -->
+    <string name="action_add">Add</string>
     <string name="action_add_screen">Add Screen</string>
     <string name="action_add_item">Add Item</string>
-    <string name="title_social">Social</string>
-    <string name="title_activity_drawer">Apps</string>
-    <string name="add_item_input">Item name</string>
-    <string name="add_item_radio_app">Apps</string>
-    <string name="add_item_radio_widget">Widget</string>
-    <string name="add_item_radio_hint">What will you add in this Workspace Item?</string>
-    <string name="action_remove_screen">Remove Current Screen</string>
-    <string name="action_add">Add</string>
-    <string name="action_rename_screen">Rename Current Screen</string>
-    <string name="action_rearrange_items">Rearrange Items</string>
-    <string name="action_rearrange_screens">Rearrange Screens</string>
+
     <string name="action_rearrange">Rearrange</string>
+    <string name="action_rearrange_screens">Rearrange Screens</string>
+    <string name="action_rearrange_items">Rearrange Items</string>
+
+    <string name="action_settings">Preferences</string>
+    <string name="action_change_wallpaper">Change Wallpaper</string>
+    <string name="action_remove_screen">Remove Current Screen</string>
+    <string name="action_rename_screen">Rename Current Screen</string>
+
+    <!-- Dialog Strings -->
+    <string name="dialog_btn_ok">Ok</string>
+    <string name="dialog_btn_cancel">Cancel</string>
+    <string name="dialog_btn_yes">Yes</string>
+    <string name="dialog_btn_no">No</string>
+
+    <string name="dialog_add_screen_title">Add Screen</string>
+    <string name="dialog_add_screen_edit_hint">Screen name</string>
+    <string name="dialog_add_screen_message">Pick a Screen name</string>
+
+    <string name="dialog_add_item_title">Add Item</string>
+    <string name="dialog_add_item_edit_hint">Item name</string>
+    <string name="dialog_add_item_radio_app">Apps</string>
+    <string name="dialog_add_item_radio_widget">Widget</string>
+    <string name="dialog_add_item_radio_hint">What will you add in this Workspace Item?</string>
+    <string name="dialog_remove_screen_title">Remove Screen</string>
+    <string name="dialog_remove_screen_message">Are you sure you want to remove this Screen?</string>
 </resources>

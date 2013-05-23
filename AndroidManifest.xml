@@ -12,11 +12,11 @@
         android:name=".LauncherApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/title_app"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.dympy.endless.Launcher"
-            android:label="@string/app_name"
+            android:label="@string/title_app"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true" >
@@ -31,7 +31,7 @@
         </activity>
         <activity
             android:name="com.dympy.endless.apps.Drawer"
-            android:label="@string/title_activity_drawer" >
+            android:label="@string/title_drawer" >
         </activity>
     </application>
 
