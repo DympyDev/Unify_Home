@@ -75,12 +75,6 @@ public class Screen {
         return screenContent;
     }
 
-    public void refreshContent() {
-        if (screenContent != null) {
-            screenContent.refreshContent();
-        }
-    }
-
     public void updateContent(Screen screen) {
         this.position = screen.getPosition();
         this.name = screen.getName();
@@ -116,16 +110,6 @@ public class Screen {
 
         public void setWorkspaceID(int id) {
             this.workspaceID = id;
-        }
-
-        // TODO: Change this so it takes a boolean (add or remove) and a WorkspaceItem so we can update the adapter
-        public void refreshContent() {
-            ListView workspaceItems = (ListView) getView().findViewById(R.id.fragment_workspace_list);
-
-            Screen items = application.getScreenByPosition(workspaceID - 1);
-            ScreenItemAdapter workspaceAdapter = new ScreenItemAdapter(this.getActivity(), R.layout.list_item_workspace, items.getItems());
-
-            workspaceItems.setAdapter(workspaceAdapter);
         }
 
     }

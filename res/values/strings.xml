@@ -34,6 +34,28 @@
     <string name="dialog_add_item_radio_app">Apps</string>
     <string name="dialog_add_item_radio_widget">Widget</string>
     <string name="dialog_add_item_radio_hint">What will you add in this Workspace Item?</string>
+
     <string name="dialog_remove_screen_title">Remove Screen</string>
     <string name="dialog_remove_screen_message">Are you sure you want to remove this Screen?</string>
+
+    <string name="dialog_rename_screen_title">Rename screen</string>
+    <string name="dialog_rename_screen_message">Change the screen title</string>
+
+    <string name="dialog_item_settings_title">Item Settings</string>
+    <string name="dialog_item_settings_list_add_app">Add app</string>
+    <string name="dialog_item_settings_list_remove_item">Remove item</string>
+    <string name="dialog_item_settings_list_rename_item">Rename item</string>
+
+    <string name="dialog_item_remove_app_title">Remove app</string>
+    <string name="dialog_item_remove_app_message">Are you sure you want to remove this app from the workspace?</string>
+    <string name="dialog_item_remove_app_toast">Removed</string>
+
+    <string name="dialog_item_remove_item_title">Remove item</string>
+    <string name="dialog_item_remove_item_message">Are you sure you want to remove this item from the workspace
+        screen?
+    </string>
+    <string name="dialog_item_add_app_title">Select an app</string>
+    <string name="dialog_item_add_app_toast">You already have this app in this Item.</string>
+    <string name="dialog_item_rename_item_title">Rename item</string>
+    <string name="dialog_item_rename_item_message">Change the item title</string>
 </resources>

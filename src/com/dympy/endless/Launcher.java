@@ -27,7 +27,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
         app = (LauncherApplication) getApplication();
 
-        SectionsPagerAdapter screensAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        ScreenPagerAdapter screensAdapter = new ScreenPagerAdapter(getSupportFragmentManager());
 
         PagerTabStrip workspaceScreenTabs = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
         workspaceScreenTabs.setTabIndicatorColor(0x3B3B3B);
@@ -59,6 +59,9 @@ public class Launcher extends FragmentActivity implements OnClickListener {
             case R.id.action_remove_screen:
                 removeScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
                 return true;
+            case R.id.action_rename_screen:
+                renameScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
+                return true;
             case R.id.action_change_wallpaper:
                 Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
                 startActivity(Intent.createChooser(intent, "Select Wallpaper"));
@@ -72,6 +75,35 @@ public class Launcher extends FragmentActivity implements OnClickListener {
         screenPager.getAdapter().notifyDataSetChanged();
     }
 
+    private void renameScreen(final Screen screen) {
+        AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
+        listDialog.setTitle(getString(R.string.dialog_rename_screen_title));
+        listDialog.setMessage(getString(R.string.dialog_rename_screen_message));
+
+        final EditText renameText = new EditText(this);
+        renameText.setText(screen.getName());
+        listDialog.setView(renameText);
+        listDialog.setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                screen.setName(renameText.getText().toString());
+                app.updateScreen(screen);
+                updatePager();
+            }
+        });
+
+        listDialog.setNegativeButton(getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Canceled.
+            }
+        });
+
+        listDialog.show();
+    }
+
     private void addScreenDialog() {
         AlertDialog.Builder addScreen = new AlertDialog.Builder(this);
         addScreen.setTitle(getString(R.string.dialog_add_screen_title));
@@ -79,24 +111,22 @@ public class Launcher extends FragmentActivity implements OnClickListener {
         screenName.setHint(getString(R.string.dialog_add_screen_edit_hint));
         addScreen.setMessage(getString(R.string.dialog_add_screen_message));
         addScreen.setView(screenName);
-        addScreen.setNegativeButton(getString(R.string.dialog_btn_cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
-        addScreen.setPositiveButton(getString(R.string.dialog_btn_ok),
-                new DialogInterface.OnClickListener() {
+        addScreen.setNegativeButton(getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        addScreen.setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Screen newScreen = new Screen();
-                        newScreen.setName(screenName.getText().toString());
-                        newScreen.setPosition(app.getScreenArraySize());
-                        app.addScreen(newScreen);
-                        updatePager();
-                    }
-                });
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Screen newScreen = new Screen();
+                newScreen.setName(screenName.getText().toString());
+                newScreen.setPosition(app.getScreenArraySize());
+                app.addScreen(newScreen);
+                updatePager();
+            }
+        });
         addScreen.show();
     }
 
@@ -106,18 +136,15 @@ public class Launcher extends FragmentActivity implements OnClickListener {
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dialog_add_item, null);
-        final EditText itemName = (EditText) dialogLayout
-                .findViewById(R.id.dialog_add_item_input);
-        final RadioGroup itemType = (RadioGroup) dialogLayout
-                .findViewById(R.id.dialog_add_item_radiogroup);
+        final EditText itemName = (EditText) dialogLayout.findViewById(R.id.dialog_add_item_input);
+        final RadioGroup itemType = (RadioGroup) dialogLayout.findViewById(R.id.dialog_add_item_radiogroup);
 
         addItem.setView(dialogLayout);
-        addItem.setNegativeButton(getString(R.string.dialog_btn_cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
+        addItem.setNegativeButton(getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
         addItem.setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
 
             @Override
@@ -125,8 +152,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
                 ScreenItem tempItem = new ScreenItem(app);
                 tempItem.setName(itemName.getText().toString());
                 tempItem.setScreenID(app.getScreenByPosition(screenPager.getCurrentItem() - 1).getScreenID());
-                tempItem.setPosition(app.getScreenItemPosition(screenPager
-                        .getCurrentItem()));
+                tempItem.setPosition(app.getScreenItemPosition(screenPager.getCurrentItem()));
                 switch (itemType.getCheckedRadioButtonId()) {
                     case R.id.dialog_add_item_app:
                         tempItem.setType(Type.APPS);
@@ -146,23 +172,21 @@ public class Launcher extends FragmentActivity implements OnClickListener {
         AlertDialog.Builder removeScreen = new AlertDialog.Builder(this);
         removeScreen.setTitle(getString(R.string.dialog_remove_screen_title));
         removeScreen.setMessage(getString(R.string.dialog_remove_screen_message));
-        removeScreen.setNegativeButton(getString(R.string.dialog_btn_no),
-                new DialogInterface.OnClickListener() {
+        removeScreen.setNegativeButton(getString(R.string.dialog_btn_no), new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Canceled.
-                    }
-                });
-        removeScreen.setPositiveButton(getString(R.string.dialog_btn_yes),
-                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        removeScreen.setPositiveButton(getString(R.string.dialog_btn_yes), new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        app.removeScreen(screen);
-                        updatePager();
-                    }
-                });
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                app.removeScreen(screen);
+                updatePager();
+            }
+        });
         removeScreen.show();
     }
 
@@ -192,12 +216,10 @@ public class Launcher extends FragmentActivity implements OnClickListener {
             case R.id.all_apps:
                 Intent drawer = new Intent(this, Drawer.class);
                 startActivity(drawer);
-                overridePendingTransition(R.animator.zoom_enter,
-                        R.animator.zoom_exit);
+                overridePendingTransition(R.animator.zoom_enter, R.animator.zoom_exit);
                 break;
             default:
-                Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT)
-                        .show();
+                Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -206,9 +228,9 @@ public class Launcher extends FragmentActivity implements OnClickListener {
      * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    public class ScreenPagerAdapter extends FragmentStatePagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        public ScreenPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -216,13 +238,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    // TODO: The actual social fragment
-                    Fragment fragment = new DummySectionFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER,
-                            position + 1);
-                    fragment.setArguments(args);
-                    return fragment;
+                    return new SocialScreenFragment();
                 default:
                     return app.getScreenByPosition(position - 1).getView();
 
@@ -253,25 +269,15 @@ public class Launcher extends FragmentActivity implements OnClickListener {
         }
     }
 
-    public static class DummySectionFragment extends Fragment {
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        public DummySectionFragment() {
-        }
+    public static class SocialScreenFragment extends Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_launcher_dummy,
-                    container, false);
-            TextView dummyTextView = (TextView) rootView
-                    .findViewById(R.id.section_label);
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-                dummyTextView.setText("Social Screen placeholder");
-            } else {
-                dummyTextView.setText(Integer.toString(getArguments().getInt(
-                        ARG_SECTION_NUMBER)));
-            }
+            //TODO: Check, if the Endless Social app is installed, if so, show actual social stuff, if not, add download button
+            View rootView = inflater.inflate(R.layout.fragment_social, container, false);
+            TextView dummyTextView = (TextView) rootView.findViewById(R.id.fragment_social_txt_placeholder);
+            dummyTextView.setText("Social Screen placeholder");
             return rootView;
         }
     }
