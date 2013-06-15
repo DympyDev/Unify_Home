@@ -23,7 +23,7 @@
         <ImageButton
             android:id="@+id/item_workspace_btn_settings"
             android:layout_width="wrap_content"
-            android:layout_height="20sp"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:background="@null"

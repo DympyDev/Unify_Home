@@ -125,11 +125,16 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
         AlertDialog.Builder itemSettings = new AlertDialog.Builder(context);
         itemSettings.setTitle(context.getString(R.string.dialog_item_settings_title));
 
-        String[] settings = {context.getString(R.string.dialog_item_settings_list_add_app),
-                context.getString(R.string.dialog_item_settings_list_remove_item),
-                context.getString(R.string.dialog_item_settings_list_rename_item)};
+        ArrayList<String> settingsArray = new ArrayList<String>();
+        if(itemHolder.instance.getType() == Type.APPS){
+            settingsArray.add(context.getString(R.string.dialog_item_settings_list_add_app));
+            settingsArray.add(context.getString(R.string.dialog_item_settings_list_rearrange_content));
+        }
+        settingsArray.add(context.getString(R.string.dialog_item_settings_list_rename_item));
+        settingsArray.add(context.getString(R.string.dialog_item_settings_list_remove_item));
+
         ListView settingsContent = new ListView(context);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, settings);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, settingsArray);
         settingsContent.setAdapter(adapter);
 
         itemSettings.setView(settingsContent);
@@ -146,15 +151,18 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 actualDialog.dismiss();
+                //TODO: I broke this
                 switch (position) {
                     case 0: // Add app
                         addAppDialog(itemHolder);
                         break;
-                    case 1: // Remove item
-                        removeItemDialog(itemHolder);
+                    case 1:
                         break;
                     case 2: // Rename item
                         renameItemDialog(itemHolder);
+                        break;
+                    case 3: // Remove item
+                        removeItemDialog(itemHolder);
                         break;
                 }
             }
