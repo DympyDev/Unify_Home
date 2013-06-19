@@ -59,4 +59,9 @@
     <string name="dialog_item_rename_item_title">Rename item</string>
     <string name="dialog_item_rename_item_message">Change the item title</string>
     <string name="dialog_item_settings_list_rearrange_content">Rearrange apps</string>
+
+    <!-- Layout Strings -->
+    <string name="buttonbar_shortcut">App Shortcut</string>
+    <string name="buttonbar_settings">Settings</string>
+    <string name="buttonbar_drawer">App Drawer</string>
 </resources>
