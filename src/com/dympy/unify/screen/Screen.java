@@ -1,9 +1,9 @@
-package com.dympy.endless.screen;
+package com.dympy.unify.screen;
 
 import java.util.ArrayList;
 
-import com.dympy.endless.LauncherApplication;
-import com.dympy.endless.R;
+import com.dympy.unify.LauncherApplication;
+import com.dympy.unify.R;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class Screen {
 
@@ -94,15 +93,10 @@ public class Screen {
             application = (LauncherApplication) getActivity().getApplication();
             View rootView = inflater.inflate(R.layout.fragment_workspace, container, false);
 
-            TextView paddingBottom = new TextView(this.getActivity());
-            paddingBottom.setHeight(getResources().getDimensionPixelOffset(R.dimen.workspace_padding_bottom));
-
             ListView workspaceItems = (ListView) rootView.findViewById(R.id.fragment_workspace_list);
 
             Screen items = application.getScreen(workspaceID);
             ScreenItemAdapter workspaceAdapter = new ScreenItemAdapter(this.getActivity(), R.layout.list_item_workspace, items.getItems());
-
-            workspaceItems.addFooterView(paddingBottom);
 
             workspaceItems.setAdapter(workspaceAdapter);
             return rootView;

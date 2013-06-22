@@ -1,4 +1,4 @@
-package com.dympy.endless.apps;
+package com.dympy.unify.apps;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;

@@ -1,4 +1,4 @@
-package com.dympy.endless.screen;
+package com.dympy.unify.apps;
 
 import java.util.ArrayList;
 
@@ -11,15 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.dympy.endless.R;
+import com.dympy.unify.R;
 
-public class ItemAppAdapter extends ArrayAdapter<ScreenItemApp> {
+public class AppDataAdapter extends ArrayAdapter<AppData> {
+	Context context;
 	int layoutResourceId;
-	private Context context;
-	private ArrayList<ScreenItemApp> data = null;
+	ArrayList<AppData> data = null;
 
-	public ItemAppAdapter(Context context, int layoutResourceId,
-			ArrayList<ScreenItemApp> data) {
+	public AppDataAdapter(Context context, int layoutResourceId,
+			ArrayList<AppData> data) {
 		super(context, layoutResourceId, data);
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
@@ -29,23 +29,23 @@ public class ItemAppAdapter extends ArrayAdapter<ScreenItemApp> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
-		ItemAppHolder holder = null;
+		AppDataHolder holder = null;
 
 		if (row == null) {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
 
-			holder = new ItemAppHolder();
+			holder = new AppDataHolder();
 			holder.txtTitle = (TextView) row
 					.findViewById(R.id.txt_appitem_name);
 
 			row.setTag(holder);
 		} else {
-			holder = (ItemAppHolder) row.getTag();
+			holder = (AppDataHolder) row.getTag();
 		}
-		ScreenItemApp app = data.get(position);
+		AppData app = data.get(position);
 		holder.txtTitle.setText(app.getName());
-		Drawable icon = app.getAppData().getIcon();
+		Drawable icon = app.getIcon();
 		icon.setBounds(
 				0,
 				0,
@@ -57,7 +57,7 @@ public class ItemAppAdapter extends ArrayAdapter<ScreenItemApp> {
 		return row;
 	}
 
-	static class ItemAppHolder {
+	static class AppDataHolder {
 		TextView txtTitle;
 	}
 }

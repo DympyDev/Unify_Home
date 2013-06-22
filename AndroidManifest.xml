@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dympy.endless"
+    package="com.dympy.unify"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -15,7 +15,7 @@
         android:label="@string/title_app"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.dympy.endless.Launcher"
+            android:name="com.dympy.unify.Launcher"
             android:label="@string/title_app"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.dympy.endless.apps.Drawer"
+            android:name="com.dympy.unify.apps.Drawer"
             android:label="@string/title_drawer" >
         </activity>
     </application>

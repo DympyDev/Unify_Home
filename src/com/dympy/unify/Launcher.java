@@ -1,4 +1,4 @@
-package com.dympy.endless;
+package com.dympy.unify;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,10 +10,13 @@ import android.support.v4.view.ViewPager;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
-import com.dympy.endless.apps.Drawer;
-import com.dympy.endless.screen.Screen;
-import com.dympy.endless.screen.ScreenItem;
-import com.dympy.endless.screen.ScreenItem.Type;
+
+import com.dympy.unify.apps.Drawer;
+import com.dympy.unify.screen.Screen;
+import com.dympy.unify.screen.ScreenItem;
+import com.dympy.unify.screen.ScreenItem.Type;
+import com.dympy.unify.ui.menu.ActionItem;
+import com.dympy.unify.ui.menu.QuickAction;
 
 public class Launcher extends FragmentActivity implements OnClickListener {
 
@@ -191,32 +194,65 @@ public class Launcher extends FragmentActivity implements OnClickListener {
     }
 
     private void initButtons() {
-        ImageButton allApps = (ImageButton) findViewById(R.id.all_apps);
-        ImageButton hotseat1 = (ImageButton) findViewById(R.id.hotseat_1);
-        ImageButton hotseat2 = (ImageButton) findViewById(R.id.hotseat_2);
-        ImageButton hotseat3 = (ImageButton) findViewById(R.id.hotseat_3);
-        ImageButton hotseat4 = (ImageButton) findViewById(R.id.hotseat_4);
-        ImageButton hotseat5 = (ImageButton) findViewById(R.id.hotseat_5);
-        ImageButton hotseat6 = (ImageButton) findViewById(R.id.hotseat_6);
+        ImageButton allApps = (ImageButton) findViewById(R.id.buttonbar_btn_drawer);
+        ImageButton hotseat1 = (ImageButton) findViewById(R.id.buttonbar_btn_fav1);
+        ImageButton hotseat2 = (ImageButton) findViewById(R.id.buttonbar_btn_fav2);
+        ImageButton hotseat3 = (ImageButton) findViewById(R.id.buttonbar_btn_fav3);
+        ImageButton hotseat4 = (ImageButton) findViewById(R.id.buttonbar_btn_fav4);
+        ImageButton hotseat5 = (ImageButton) findViewById(R.id.buttonbar_btn_fav5);
+        ImageButton btnSettings = (ImageButton) findViewById(R.id.buttonbar_btn_settings);
 
         allApps.setOnClickListener(this);
         hotseat1.setOnClickListener(this);
         hotseat2.setOnClickListener(this);
         hotseat3.setOnClickListener(this);
         hotseat4.setOnClickListener(this);
-        if (hotseat5 != null && hotseat6 != null) {
-            hotseat5.setOnClickListener(this);
-            hotseat6.setOnClickListener(this);
-        }
+        //if (hotseat5 != null && hotseat6 != null) {
+        hotseat5.setOnClickListener(this);
+        btnSettings.setOnClickListener(this);
+        //}
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.all_apps:
+            case R.id.buttonbar_btn_drawer:
                 Intent drawer = new Intent(this, Drawer.class);
                 startActivity(drawer);
                 overridePendingTransition(R.animator.zoom_enter, R.animator.zoom_exit);
+                break;
+            case R.id.buttonbar_btn_settings:
+                QuickAction quickAction = new QuickAction(this);
+                quickAction.addActionItem(new ActionItem(0, this.getString(R.string.action_add_item)));
+                quickAction.addActionItem(new ActionItem(1, this.getString(R.string.action_add_screen)));
+                quickAction.addActionItem(new ActionItem(2, this.getString(R.string.action_remove_screen)));
+                quickAction.addActionItem(new ActionItem(3, this.getString(R.string.action_rename_screen)));
+                quickAction.addActionItem(new ActionItem(4, this.getString(R.string.action_change_wallpaper)));
+
+                quickAction.show(v, true);
+                quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+                    @Override
+                    public void onItemClick(QuickAction source, int pos, int actionId) {
+                        switch (actionId) {
+                            case 0:
+                                addItemDialog();
+                                break;
+                            case 1:
+                                addScreenDialog();
+                                break;
+                            case 2:
+                                removeScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
+                                break;
+                            case 3:
+                                renameScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
+                                break;
+                            case 4:
+                                Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+                                break;
+                        }
+                    }
+                });
                 break;
             default:
                 Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();

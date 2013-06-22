@@ -1,4 +1,4 @@
-package com.dympy.endless;
+package com.dympy.unify;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,10 +16,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
-import com.dympy.endless.apps.AppData;
-import com.dympy.endless.screen.Screen;
-import com.dympy.endless.screen.ScreenItem;
-import com.dympy.endless.screen.ScreenItemApp;
+import com.dympy.unify.apps.AppData;
+import com.dympy.unify.screen.Screen;
+import com.dympy.unify.screen.ScreenItem;
+import com.dympy.unify.screen.ScreenItemApp;
 
 public class LauncherApplication extends Application {
 

@@ -1,7 +1,7 @@
-package com.dympy.endless.apps;
+package com.dympy.unify.apps;
 
-import com.dympy.endless.LauncherApplication;
-import com.dympy.endless.R;
+import com.dympy.unify.LauncherApplication;
+import com.dympy.unify.R;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -19,10 +19,6 @@ public class Drawer extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_drawer);
 		application = (LauncherApplication) getApplication();
-
-		if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
 
 		GridView appGrid = (GridView) findViewById(R.id.activity_drawer_appgrid);
 		AppDataAdapter adapter = new AppDataAdapter(this,

@@ -1,4 +1,4 @@
-package com.dympy.endless.screen;
+package com.dympy.unify.screen;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,13 +25,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dympy.endless.Launcher;
-import com.dympy.endless.LauncherApplication;
-import com.dympy.endless.R;
-import com.dympy.endless.apps.AppData;
-import com.dympy.endless.apps.AppDataAdapter;
-import com.dympy.endless.screen.ScreenItem.Type;
-import com.dympy.endless.ui.CustomGrid;
+import com.dympy.unify.Launcher;
+import com.dympy.unify.LauncherApplication;
+import com.dympy.unify.R;
+import com.dympy.unify.apps.AppData;
+import com.dympy.unify.apps.AppDataAdapter;
+import com.dympy.unify.screen.ScreenItem.Type;
+import com.dympy.unify.ui.CustomGrid;
+import com.dympy.unify.ui.menu.ActionItem;
+import com.dympy.unify.ui.menu.QuickAction;
 
 public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
     private Context context;
@@ -70,7 +72,39 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 
             @Override
             public void onClick(View v) {
-                showSettingsDialog(itemHolder);
+                final QuickAction quickAction = new QuickAction(context);
+
+
+                if(itemHolder.instance.getType() == Type.APPS){
+                    quickAction.addActionItem(new ActionItem(0, context.getString(R.string.dialog_item_settings_list_add_app)));
+                    quickAction.addActionItem(new ActionItem(1, context.getString(R.string.dialog_item_settings_list_rearrange_content)));
+                }
+                quickAction.addActionItem(new ActionItem(2, context.getString(R.string.dialog_item_settings_list_rename_item)));
+                quickAction.addActionItem(new ActionItem(3, context.getString(R.string.dialog_item_settings_list_remove_item)));
+
+                quickAction.show(v, true);
+                quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+                    @Override
+                    public void onItemClick(QuickAction source, int pos, int actionId) {
+                        ActionItem actionItem = quickAction.getActionItem(pos);
+
+                        switch (actionItem.getActionId()) {
+                            case 0: // Add app
+                                addAppDialog(itemHolder);
+                                break;
+                            case 1: // Rearrange apps
+                                Toast.makeText(context, "Rearrange apps dialog", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2: // Rename item
+                                renameItemDialog(itemHolder);
+                                break;
+                            case 3: // Remove item
+                                removeItemDialog(itemHolder);
+                                break;
+                        }
+                    }
+                });
+                //showSettingsDialog(itemHolder);
             }
         });
 

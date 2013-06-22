@@ -1,50 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/NowCardStyle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+              android:background="@drawable/card"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingRight="5dp" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/popup_item">
 
         <TextView
-            android:id="@+id/item_workspace_txt_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:paddingLeft="10dp"
-            android:text="@string/title_app"
-            android:textAppearance="@style/DefaultTextStyle.Medium" />
+                android:id="@+id/item_workspace_txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="10dp"
+                android:text="@string/title_app"
+                android:textAppearance="@style/DefaultTextStyle"
+                android:textSize="24sp"/>
 
         <ImageButton
-            android:id="@+id/item_workspace_btn_settings"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="@null"
-            android:contentDescription="@string/action_settings"
-            android:maxHeight="18sp"
-            android:src="@drawable/ic_horizontal_settings" />
+                android:id="@+id/item_workspace_btn_settings"
+                android:layout_width="40dp"
+                android:layout_height="24sp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/popup_item"
+                android:contentDescription="@string/action_settings"
+                android:maxHeight="18sp"
+                android:src="@drawable/ic_horizontal_settings"/>
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/item_workspace_layout_widget"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+            android:id="@+id/item_workspace_layout_widget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     </LinearLayout>
 
-    <com.dympy.endless.ui.CustomGrid
-        android:id="@+id/item_workspace_grid_apps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:isScrollContainer="false"
-        android:numColumns="@integer/workspace_app_columns" >
-    </com.dympy.endless.ui.CustomGrid>
+    <com.dympy.unify.ui.CustomGrid
+            android:id="@+id/item_workspace_grid_apps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:isScrollContainer="false"
+            android:numColumns="@integer/workspace_app_columns">
+    </com.dympy.unify.ui.CustomGrid>
 
 </LinearLayout>

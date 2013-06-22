@@ -1,6 +1,6 @@
-package com.dympy.endless.screen;
+package com.dympy.unify.screen;
 
-import com.dympy.endless.apps.AppData;
+import com.dympy.unify.apps.AppData;
 
 public class ScreenItemApp {
 	private int itemID;
