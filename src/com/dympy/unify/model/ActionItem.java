@@ -1,4 +1,4 @@
-package com.dympy.unify.ui.menu;
+package com.dympy.unify.model;
 
 import android.graphics.drawable.Drawable;
 import android.graphics.Bitmap;

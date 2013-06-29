@@ -1,14 +1,11 @@
-package com.dympy.unify.ui.menu;
+package com.dympy.unify.view.custom;
 
 import android.content.Context;
 
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ScrollView;
-import android.widget.RelativeLayout;
 import android.widget.PopupWindow.OnDismissListener;
 
 import android.view.Gravity;
@@ -19,6 +16,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
 
 import com.dympy.unify.R;
+import com.dympy.unify.model.ActionItem;
 
 import java.util.List;
 import java.util.ArrayList;

@@ -1,7 +1,8 @@
-package com.dympy.unify.apps;
+package com.dympy.unify;
 
 import com.dympy.unify.LauncherApplication;
 import com.dympy.unify.R;
+import com.dympy.unify.view.AppDataAdapter;
 
 import android.os.Bundle;
 import android.view.MenuItem;

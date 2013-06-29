@@ -11,12 +11,11 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
 
-import com.dympy.unify.apps.Drawer;
-import com.dympy.unify.screen.Screen;
-import com.dympy.unify.screen.ScreenItem;
-import com.dympy.unify.screen.ScreenItem.Type;
-import com.dympy.unify.ui.menu.ActionItem;
-import com.dympy.unify.ui.menu.QuickAction;
+import com.dympy.unify.model.Screen;
+import com.dympy.unify.model.ScreenItem;
+import com.dympy.unify.model.ScreenItem.Type;
+import com.dympy.unify.model.ActionItem;
+import com.dympy.unify.view.custom.QuickAction;
 
 public class Launcher extends FragmentActivity implements OnClickListener {
 
@@ -45,33 +44,8 @@ public class Launcher extends FragmentActivity implements OnClickListener {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.launcher, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add_item:
-                addItemDialog();
-                return true;
-            case R.id.action_add_screen:
-                addScreenDialog();
-                return true;
-            case R.id.action_remove_screen:
-                removeScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
-                return true;
-            case R.id.action_rename_screen:
-                renameScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
-                return true;
-            case R.id.action_change_wallpaper:
-                Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
-                startActivity(Intent.createChooser(intent, "Select Wallpaper"));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    public void onBackPressed() {
+        //We don't want to exit this screen!
     }
 
     public void updatePager() {

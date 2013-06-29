@@ -1,4 +1,4 @@
-package com.dympy.unify.screen;
+package com.dympy.unify.model;
 
 import java.util.ArrayList;
 

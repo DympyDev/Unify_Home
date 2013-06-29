@@ -1,4 +1,4 @@
-package com.dympy.unify.apps;
+package com.dympy.unify.view;
 
 import java.util.ArrayList;
 
@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dympy.unify.R;
+import com.dympy.unify.model.AppData;
 
 public class AppDataAdapter extends ArrayAdapter<AppData> {
 	Context context;

@@ -16,16 +16,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
-import com.dympy.unify.apps.AppData;
-import com.dympy.unify.screen.Screen;
-import com.dympy.unify.screen.ScreenItem;
-import com.dympy.unify.screen.ScreenItemApp;
+import com.dympy.unify.controller.DatabaseHandler;
+import com.dympy.unify.model.AppData;
+import com.dympy.unify.model.Screen;
+import com.dympy.unify.model.ScreenItem;
+import com.dympy.unify.model.ScreenItemApp;
 
 public class LauncherApplication extends Application {
 
     //private static String TAG = "LAUNCHERAPPLICATION";
 
     private ArrayList<AppData> appsArray;
+    private ArrayList<AppData> favArray;
     private List<AppWidgetProviderInfo> widgetsArray;
     private ArrayList<Screen> screenArray;
     public AppWidgetManager widgetManager;
@@ -99,6 +101,10 @@ public class LauncherApplication extends Application {
             addScreen(mainScreen);
         }
         screenArray = db.getScreens();
+    }
+
+    private void populateFavorite(){
+
     }
 
     /*

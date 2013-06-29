@@ -2,7 +2,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="56dp"
         android:background="@color/White">
 
     <LinearLayout
@@ -11,8 +11,8 @@
             android:padding="4dp">
 
         <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:id="@+id/buttonbar_btn_fav1"
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
@@ -20,8 +20,8 @@
                 android:background="@drawable/popup_item"/>
 
         <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:id="@+id/buttonbar_btn_fav2"
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
@@ -29,8 +29,8 @@
                 android:background="@drawable/popup_item"/>
 
         <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:id="@+id/buttonbar_btn_fav3"
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
@@ -38,8 +38,8 @@
                 android:background="@drawable/popup_item"/>
 
         <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:id="@+id/buttonbar_btn_fav4"
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
@@ -47,9 +47,27 @@
                 android:background="@drawable/popup_item"/>
 
         <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:id="@+id/buttonbar_btn_fav5"
+                android:contentDescription="@string/buttonbar_shortcut"
+                android:src="@drawable/ic_bar_add"
+                android:scaleType="fitCenter"
+                android:background="@drawable/popup_item"/>
+
+        <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/buttonbar_btn_fav6"
+                android:contentDescription="@string/buttonbar_shortcut"
+                android:src="@drawable/ic_bar_add"
+                android:scaleType="fitCenter"
+                android:background="@drawable/popup_item"/>
+
+        <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/buttonbar_btn_fav7"
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
@@ -63,8 +81,8 @@
             android:paddingRight="4dp">
 
         <ImageButton
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:id="@+id/buttonbar_btn_drawer"
                 android:contentDescription="@string/buttonbar_drawer"
                 android:src="@drawable/ic_bar_apps"
@@ -72,7 +90,7 @@
                 android:background="@drawable/popup_item"/>
 
         <ImageButton
-                android:layout_width="30dp"
+                android:layout_width="38dp"
                 android:layout_height="fill_parent"
                 android:id="@+id/buttonbar_btn_settings"
                 android:contentDescription="@string/buttonbar_settings"

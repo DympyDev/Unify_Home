@@ -1,4 +1,4 @@
-package com.dympy.unify.screen;
+package com.dympy.unify.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,12 +28,13 @@ import android.widget.Toast;
 import com.dympy.unify.Launcher;
 import com.dympy.unify.LauncherApplication;
 import com.dympy.unify.R;
-import com.dympy.unify.apps.AppData;
-import com.dympy.unify.apps.AppDataAdapter;
-import com.dympy.unify.screen.ScreenItem.Type;
-import com.dympy.unify.ui.CustomGrid;
-import com.dympy.unify.ui.menu.ActionItem;
-import com.dympy.unify.ui.menu.QuickAction;
+import com.dympy.unify.model.AppData;
+import com.dympy.unify.model.ScreenItem;
+import com.dympy.unify.model.ScreenItem.Type;
+import com.dympy.unify.model.ScreenItemApp;
+import com.dympy.unify.view.custom.CustomGrid;
+import com.dympy.unify.model.ActionItem;
+import com.dympy.unify.view.custom.QuickAction;
 
 public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
     private Context context;

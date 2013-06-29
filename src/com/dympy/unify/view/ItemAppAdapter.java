@@ -1,4 +1,4 @@
-package com.dympy.unify.screen;
+package com.dympy.unify.view;
 
 import java.util.ArrayList;
 
@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dympy.unify.R;
+import com.dympy.unify.model.ScreenItemApp;
 
 public class ItemAppAdapter extends ArrayAdapter<ScreenItemApp> {
 	int layoutResourceId;

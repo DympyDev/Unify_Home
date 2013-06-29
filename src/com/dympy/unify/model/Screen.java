@@ -1,9 +1,10 @@
-package com.dympy.unify.screen;
+package com.dympy.unify.model;
 
 import java.util.ArrayList;
 
 import com.dympy.unify.LauncherApplication;
 import com.dympy.unify.R;
+import com.dympy.unify.view.ScreenItemAdapter;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

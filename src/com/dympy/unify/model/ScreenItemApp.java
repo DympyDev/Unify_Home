@@ -1,6 +1,4 @@
-package com.dympy.unify.screen;
-
-import com.dympy.unify.apps.AppData;
+package com.dympy.unify.model;
 
 public class ScreenItemApp {
 	private int itemID;
