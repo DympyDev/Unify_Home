@@ -46,14 +46,7 @@ public class AppDataAdapter extends ArrayAdapter<AppData> {
 		}
 		AppData app = data.get(position);
 		holder.txtTitle.setText(app.getName());
-		Drawable icon = app.getIcon();
-		icon.setBounds(
-				0,
-				0,
-				context.getResources().getDimensionPixelOffset(
-						R.dimen.icon_size), context.getResources()
-						.getDimensionPixelOffset(R.dimen.icon_size));
-		holder.txtTitle.setCompoundDrawables(null, icon, null, null);
+		holder.txtTitle.setCompoundDrawables(null, app.getIcon(), null, null);
 
 		return row;
 	}

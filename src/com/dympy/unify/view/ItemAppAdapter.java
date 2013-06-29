@@ -46,14 +46,7 @@ public class ItemAppAdapter extends ArrayAdapter<ScreenItemApp> {
 		}
 		ScreenItemApp app = data.get(position);
 		holder.txtTitle.setText(app.getName());
-		Drawable icon = app.getAppData().getIcon();
-		icon.setBounds(
-				0,
-				0,
-				context.getResources().getDimensionPixelOffset(
-						R.dimen.icon_size), context.getResources()
-						.getDimensionPixelOffset(R.dimen.icon_size));
-		holder.txtTitle.setCompoundDrawables(null, icon, null, null);
+		holder.txtTitle.setCompoundDrawables(null, app.getAppData().getIcon(), null, null);
 
 		return row;
 	}

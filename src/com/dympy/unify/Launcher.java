@@ -11,16 +11,20 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
 
+import com.dympy.unify.model.AppData;
+import com.dympy.unify.model.Favorite;
 import com.dympy.unify.model.Screen;
 import com.dympy.unify.model.ScreenItem;
 import com.dympy.unify.model.ScreenItem.Type;
 import com.dympy.unify.model.ActionItem;
+import com.dympy.unify.view.AppDataAdapter;
 import com.dympy.unify.view.custom.QuickAction;
 
-public class Launcher extends FragmentActivity implements OnClickListener {
+public class Launcher extends FragmentActivity implements OnClickListener, View.OnLongClickListener {
 
     private ViewPager screenPager;
     private LauncherApplication app;
+    private boolean longPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,72 +171,192 @@ public class Launcher extends FragmentActivity implements OnClickListener {
         removeScreen.show();
     }
 
+    private void setFavoriteDialog(final int pos) {
+        final AlertDialog listDialog;
+        AlertDialog.Builder listBuilder = new AlertDialog.Builder(this);
+        listBuilder.setTitle(getString(R.string.dialog_item_add_app_title));
+
+        GridView appGrid = new GridView(this);
+        appGrid.setNumColumns(3);
+        AppDataAdapter gridAdapter = new AppDataAdapter(this, R.layout.list_item_app, app.getApps());
+        appGrid.setAdapter(gridAdapter);
+        listBuilder.setView(appGrid);
+        listDialog = listBuilder.create();
+
+        appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                listDialog.dismiss();
+                AppData chosenApp = app.getApps().get(position);
+                Favorite newFav = new Favorite(pos, chosenApp);
+                app.setFavorite(newFav);
+                setFavoriteBtns();
+            }
+        });
+
+        listDialog.show();
+    }
+
     private void initButtons() {
+        //TODO: Add Tablet favorite buttons too
         ImageButton allApps = (ImageButton) findViewById(R.id.buttonbar_btn_drawer);
-        ImageButton hotseat1 = (ImageButton) findViewById(R.id.buttonbar_btn_fav1);
-        ImageButton hotseat2 = (ImageButton) findViewById(R.id.buttonbar_btn_fav2);
-        ImageButton hotseat3 = (ImageButton) findViewById(R.id.buttonbar_btn_fav3);
-        ImageButton hotseat4 = (ImageButton) findViewById(R.id.buttonbar_btn_fav4);
-        ImageButton hotseat5 = (ImageButton) findViewById(R.id.buttonbar_btn_fav5);
+        ImageButton favorite1 = (ImageButton) findViewById(R.id.buttonbar_btn_fav1);
+        ImageButton favorite2 = (ImageButton) findViewById(R.id.buttonbar_btn_fav2);
+        ImageButton favorite3 = (ImageButton) findViewById(R.id.buttonbar_btn_fav3);
+        ImageButton favorite4 = (ImageButton) findViewById(R.id.buttonbar_btn_fav4);
+        ImageButton favorite5 = (ImageButton) findViewById(R.id.buttonbar_btn_fav5);
         ImageButton btnSettings = (ImageButton) findViewById(R.id.buttonbar_btn_settings);
 
         allApps.setOnClickListener(this);
-        hotseat1.setOnClickListener(this);
-        hotseat2.setOnClickListener(this);
-        hotseat3.setOnClickListener(this);
-        hotseat4.setOnClickListener(this);
-        //if (hotseat5 != null && hotseat6 != null) {
-        hotseat5.setOnClickListener(this);
+        favorite1.setOnClickListener(this);
+        favorite1.setOnLongClickListener(this);
+        favorite2.setOnClickListener(this);
+        favorite2.setOnLongClickListener(this);
+        favorite3.setOnClickListener(this);
+        favorite3.setOnLongClickListener(this);
+        favorite4.setOnClickListener(this);
+        favorite4.setOnLongClickListener(this);
+        favorite5.setOnClickListener(this);
+        favorite5.setOnLongClickListener(this);
         btnSettings.setOnClickListener(this);
-        //}
+        setFavoriteBtns();
+    }
+
+    private void setFavoriteBtns(){
+        ImageButton favorite1 = (ImageButton) findViewById(R.id.buttonbar_btn_fav1);
+        ImageButton favorite2 = (ImageButton) findViewById(R.id.buttonbar_btn_fav2);
+        ImageButton favorite3 = (ImageButton) findViewById(R.id.buttonbar_btn_fav3);
+        ImageButton favorite4 = (ImageButton) findViewById(R.id.buttonbar_btn_fav4);
+        ImageButton favorite5 = (ImageButton) findViewById(R.id.buttonbar_btn_fav5);
+
+        if(app.getFavorite(0) != null){
+            favorite1.setImageDrawable(app.getFavorite(0).getContent().getIcon().getConstantState().newDrawable());
+        }
+        if(app.getFavorite(1) != null){
+            favorite2.setImageDrawable(app.getFavorite(1).getContent().getIcon().getConstantState().newDrawable());
+        }
+        if(app.getFavorite(2) != null){
+            favorite3.setImageDrawable(app.getFavorite(2).getContent().getIcon().getConstantState().newDrawable());
+        }
+        if(app.getFavorite(3) != null){
+            favorite4.setImageDrawable(app.getFavorite(3).getContent().getIcon().getConstantState().newDrawable());
+        }
+        if(app.getFavorite(4) != null){
+            favorite5.setImageDrawable(app.getFavorite(4).getContent().getIcon().getConstantState().newDrawable());
+        }
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.buttonbar_btn_drawer:
-                Intent drawer = new Intent(this, Drawer.class);
-                startActivity(drawer);
-                overridePendingTransition(R.animator.zoom_enter, R.animator.zoom_exit);
-                break;
-            case R.id.buttonbar_btn_settings:
-                QuickAction quickAction = new QuickAction(this);
-                quickAction.addActionItem(new ActionItem(0, this.getString(R.string.action_add_item)));
-                quickAction.addActionItem(new ActionItem(1, this.getString(R.string.action_add_screen)));
-                quickAction.addActionItem(new ActionItem(2, this.getString(R.string.action_remove_screen)));
-                quickAction.addActionItem(new ActionItem(3, this.getString(R.string.action_rename_screen)));
-                quickAction.addActionItem(new ActionItem(4, this.getString(R.string.action_change_wallpaper)));
-
-                quickAction.show(v, true);
-                quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
-                    @Override
-                    public void onItemClick(QuickAction source, int pos, int actionId) {
-                        switch (actionId) {
-                            case 0:
-                                addItemDialog();
-                                break;
-                            case 1:
-                                addScreenDialog();
-                                break;
-                            case 2:
-                                removeScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
-                                break;
-                            case 3:
-                                renameScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
-                                break;
-                            case 4:
-                                Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
-                                startActivity(Intent.createChooser(intent, "Select Wallpaper"));
-                                break;
-                        }
+        if (longPressed) {
+            longPressed = false;
+        } else {
+            switch (v.getId()) {
+                case R.id.buttonbar_btn_fav1:
+                    if (app.getFavorite(0) != null) {
+                        startActivity(app.getFavorite(0).getContent().getIntent());
+                    } else {
+                        setFavoriteDialog(0);
                     }
-                });
-                break;
-            default:
-                Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
-                break;
+                    break;
+                case R.id.buttonbar_btn_fav2:
+                    if (app.getFavorite(1) != null) {
+                        startActivity(app.getFavorite(1).getContent().getIntent());
+                    } else {
+                        setFavoriteDialog(1);
+                    }
+                    break;
+                case R.id.buttonbar_btn_fav3:
+                    if (app.getFavorite(2) != null) {
+                        startActivity(app.getFavorite(2).getContent().getIntent());
+                    } else {
+                        setFavoriteDialog(2);
+                    }
+                    break;
+                case R.id.buttonbar_btn_fav4:
+                    if (app.getFavorite(3) != null) {
+                        startActivity(app.getFavorite(3).getContent().getIntent());
+                    } else {
+                        setFavoriteDialog(3);
+                    }
+                    break;
+                case R.id.buttonbar_btn_fav5:
+                    if (app.getFavorite(4) != null) {
+                        startActivity(app.getFavorite(4).getContent().getIntent());
+                    } else {
+                        setFavoriteDialog(4);
+                    }
+                    break;
+                case R.id.buttonbar_btn_drawer:
+                    Intent drawer = new Intent(this, Drawer.class);
+                    startActivity(drawer);
+                    overridePendingTransition(R.animator.zoom_enter, R.animator.zoom_exit);
+                    break;
+                case R.id.buttonbar_btn_settings:
+                    QuickAction quickAction = new QuickAction(this);
+                    quickAction.addActionItem(new ActionItem(0, this.getString(R.string.action_add_item)));
+                    quickAction.addActionItem(new ActionItem(1, this.getString(R.string.action_add_screen)));
+                    quickAction.addActionItem(new ActionItem(2, this.getString(R.string.action_remove_screen)));
+                    quickAction.addActionItem(new ActionItem(3, this.getString(R.string.action_rename_screen)));
+                    quickAction.addActionItem(new ActionItem(4, this.getString(R.string.action_change_wallpaper)));
+
+                    quickAction.show(v, true);
+                    quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+                        @Override
+                        public void onItemClick(QuickAction source, int pos, int actionId) {
+                            switch (actionId) {
+                                case 0:
+                                    addItemDialog();
+                                    break;
+                                case 1:
+                                    addScreenDialog();
+                                    break;
+                                case 2:
+                                    removeScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
+                                    break;
+                                case 3:
+                                    renameScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
+                                    break;
+                                case 4:
+                                    Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                    startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+                                    break;
+                            }
+                        }
+                    });
+                    break;
+                default:
+                    Toast.makeText(this, "Something broke..", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
     }
+
+    @Override
+    public boolean onLongClick(View view) {
+        longPressed = true;
+        switch (view.getId()) {
+            case R.id.buttonbar_btn_fav1:
+                setFavoriteDialog(0);
+                return false;
+            case R.id.buttonbar_btn_fav2:
+                setFavoriteDialog(1);
+                return false;
+            case R.id.buttonbar_btn_fav3:
+                setFavoriteDialog(2);
+                return false;
+            case R.id.buttonbar_btn_fav4:
+                setFavoriteDialog(3);
+                return false;
+            case R.id.buttonbar_btn_fav5:
+                setFavoriteDialog(4);
+                return false;
+            default:
+                return false;
+        }
+    }
+
 
     /**
      * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
@@ -284,7 +408,7 @@ public class Launcher extends FragmentActivity implements OnClickListener {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            //TODO: Check, if the Endless Social app is installed, if so, show actual social stuff, if not, add download button
+            //TODO: Check, if the Scl. is installed, if so, show actual social stuff, if not, add download button
             View rootView = inflater.inflate(R.layout.fragment_social, container, false);
             TextView dummyTextView = (TextView) rootView.findViewById(R.id.fragment_social_txt_placeholder);
             dummyTextView.setText("Social Screen placeholder");

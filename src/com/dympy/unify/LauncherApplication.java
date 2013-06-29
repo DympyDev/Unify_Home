@@ -15,9 +15,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.dympy.unify.controller.DatabaseHandler;
 import com.dympy.unify.model.AppData;
+import com.dympy.unify.model.Favorite;
 import com.dympy.unify.model.Screen;
 import com.dympy.unify.model.ScreenItem;
 import com.dympy.unify.model.ScreenItemApp;
@@ -27,7 +30,7 @@ public class LauncherApplication extends Application {
     //private static String TAG = "LAUNCHERAPPLICATION";
 
     private ArrayList<AppData> appsArray;
-    private ArrayList<AppData> favArray;
+    private ArrayList<Favorite> favArray;
     private List<AppWidgetProviderInfo> widgetsArray;
     private ArrayList<Screen> screenArray;
     public AppWidgetManager widgetManager;
@@ -42,12 +45,7 @@ public class LauncherApplication extends Application {
         populateWidgets();
 
         populateScreens();
-        Collections.sort(screenArray, new ScreenComparator());
-        for (int i = 0; i < screenArray.size(); i++) {
-            Collections.sort(screenArray.get(i).getItems(), new ScreenItemComparator());
-        }
-        // TODO: Sort screens and their content
-
+        populateFavorite();
         // TODO: Add the broadcast receiver for new or removed apps
 
         super.onCreate();
@@ -71,7 +69,14 @@ public class LauncherApplication extends Application {
         for (ResolveInfo info : packages) {
             AppData temp = new AppData();
             temp.setName(info.loadLabel(pm).toString());
-            temp.setIcon(info.loadIcon(pm));
+            Drawable icon = info.loadIcon(pm);
+            icon.setBounds(
+                    0,
+                    0,
+                    getResources().getDimensionPixelOffset(
+                            R.dimen.icon_size), getResources()
+                    .getDimensionPixelOffset(R.dimen.icon_size));
+            temp.setIcon(icon);
             temp.setPackageName(info.activityInfo.applicationInfo.packageName);
             temp.setActivityName(info.activityInfo.name);
 
@@ -101,10 +106,15 @@ public class LauncherApplication extends Application {
             addScreen(mainScreen);
         }
         screenArray = db.getScreens();
+        Collections.sort(screenArray, new ScreenComparator());
+        for (int i = 0; i < screenArray.size(); i++) {
+            Collections.sort(screenArray.get(i).getItems(), new ScreenItemComparator());
+        }
     }
 
-    private void populateFavorite(){
-
+    private void populateFavorite() {
+        favArray = db.getFavorites();
+        Collections.sort(favArray, new FavoriteComparator());
     }
 
     /*
@@ -202,7 +212,8 @@ public class LauncherApplication extends Application {
 
     public void updateScreen(Screen temp) {
         for (int i = 0; i < screenArray.size(); i++) {
-            if (screenArray.get(i).getScreenID() == temp.getScreenID()) screenArray.get(i).updateContent(temp);
+            if (screenArray.get(i).getScreenID() == temp.getScreenID())
+                screenArray.get(i).updateContent(temp);
         }
         db.updateScreen(temp);
     }
@@ -259,8 +270,52 @@ public class LauncherApplication extends Application {
     }
 
     public void removeScreenItemApp(ScreenItemApp app) {
-        //TODO: Position updating
+        //TODO: Position updating of the other apps
         db.removeScreenItemApp(app);
+    }
+
+    /*
+     * Favorite functions
+     */
+    public ArrayList<Favorite> getFavorites() {
+        return favArray;
+    }
+
+    public Favorite getFavorite(int pos) {
+        Favorite fav = null;
+        for (int i = 0; i < favArray.size(); i++) {
+            Log.d("Favorite", "Checking '" + favArray.get(i).getFavPos() + "' with '" + pos + "'");
+            if (favArray.get(i).getFavPos() == pos) {
+                Log.d("Favorite", "Found a match");
+                fav = favArray.get(i);
+            }
+        }
+        return fav;
+    }
+
+    public void setFavorite(Favorite newFav) {
+        boolean newPos = true;
+        for (int i = 0; i < favArray.size(); i++) {
+            if (favArray.get(i).getFavPos() == newFav.getFavPos()) {
+                Log.d("Favorite", "Updating favorite");
+                newPos = false;
+                favArray.set(i, newFav);
+                db.updateFavorite(newFav);
+            }
+        }
+        if (newPos) {
+            Log.d("Favorite", "Adding favorite");
+            favArray.add(newFav);
+            db.addFavorite(newFav);
+        }
+    }
+
+    public class FavoriteComparator implements Comparator<Favorite> {
+
+        @Override
+        public int compare(Favorite favorite, Favorite favorite2) {
+            return favorite.getFavPos() - favorite2.getFavPos();
+        }
     }
 
     /*
