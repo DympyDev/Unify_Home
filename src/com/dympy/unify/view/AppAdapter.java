@@ -14,13 +14,13 @@ import android.widget.TextView;
 import com.dympy.unify.R;
 import com.dympy.unify.model.AppData;
 
-public class AppDataAdapter extends ArrayAdapter<AppData> {
+public class AppAdapter extends ArrayAdapter<AppData> {
 	Context context;
 	int layoutResourceId;
 	ArrayList<AppData> data = null;
 
-	public AppDataAdapter(Context context, int layoutResourceId,
-			ArrayList<AppData> data) {
+	public AppAdapter(Context context, int layoutResourceId,
+                      ArrayList<AppData> data) {
 		super(context, layoutResourceId, data);
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;

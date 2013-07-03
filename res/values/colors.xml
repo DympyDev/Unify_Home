@@ -13,4 +13,16 @@
     <color name="Grey.Light">#707070</color>
     <color name="Grey.Light.Transparent">#4B707070</color>
 
+    <color name="Holo.Blue.Light">#33B5E5</color>
+    <color name="Holo.Blue.Dark">#0099CC</color>
+    <color name="Holo.Purple.Light">#AA66CC</color>
+    <color name="Holo.Purple.Dark">#9933CC</color>
+    <color name="Holo.Green.Light">#99CC00</color>
+    <color name="Holo.Green.Dark">#669900</color>
+    <color name="Holo.Orange.Light">#FFBB33</color>
+    <color name="Holo.Orange.Dark">#FF8800</color>
+    <color name="Holo.Red.Light">#FF4444</color>
+    <color name="Holo.Red.Dark">#CC0000</color>
+    <color name="Holo.Text">#555555</color>
+
 </resources>

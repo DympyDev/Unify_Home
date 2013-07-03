@@ -1,26 +1,16 @@
 package com.dympy.unify.view;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,116 +20,88 @@ import com.dympy.unify.LauncherApplication;
 import com.dympy.unify.R;
 import com.dympy.unify.model.AppData;
 import com.dympy.unify.model.ScreenItem;
-import com.dympy.unify.model.ScreenItem.Type;
 import com.dympy.unify.model.ScreenItemApp;
 import com.dympy.unify.view.custom.CustomGrid;
-import com.dympy.unify.model.ActionItem;
-import com.dympy.unify.view.custom.QuickAction;
 
-public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
-    private Context context;
-    private ArrayList<ScreenItem> data = null;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+/**
+ * Created by Dymion on 2-7-13.
+ */
+public class ItemAdapter extends ArrayAdapter<ScreenItem> {
+    private final static String TAG = "ItemAdapter";
+    private final Activity context;
     private LauncherApplication app;
-
+    private final ScreenItem[] items;
     private boolean longPressed = false;
 
-    public ScreenItemAdapter(Context context, int layoutResourceId, ArrayList<ScreenItem> data) {
-        super(context, layoutResourceId, data);
-        Log.d("ScreenItemAdapter", context.getClass().getName());
+    static class ItemHolder {
+        public TextView title;
+        public CustomGrid appGrid;
+        public ScreenItem instance;
+    }
+
+    public ItemAdapter(Activity context, ScreenItem[] objects) {
+        super(context, R.layout.list_item_workspace, objects);
         this.context = context;
-        app = (LauncherApplication) context.getApplicationContext();
-        this.data = data;
+        this.app = (LauncherApplication) context.getApplication();
+        this.items = objects;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ScreenItem instance = data.get(position);
-        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-        View row = inflater.inflate(R.layout.list_item_workspace, parent, false);
-        ScreenItemHolder tempHolder = new ScreenItemHolder();
+        View rowView = convertView;
+        ScreenItem item = items[position];
+        if (rowView == null) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            rowView = inflater.inflate(R.layout.list_item_workspace, null);
+            ItemHolder itemHolder = new ItemHolder();
+            itemHolder.title = (TextView) rowView.findViewById(R.id.item_workspace_txt_title);
+            itemHolder.appGrid = (CustomGrid) rowView.findViewById(R.id.item_workspace_grid_apps);
+            itemHolder.instance = item;
+            rowView.setTag(itemHolder);
+        }
 
-        tempHolder.instance = instance;
-        tempHolder.title = (TextView) row.findViewById(R.id.item_workspace_txt_title);
-        tempHolder.appGrid = (CustomGrid) row.findViewById(R.id.item_workspace_grid_apps);
-
-        final ScreenItemHolder itemHolder = tempHolder;
-
-        ImageButton itemViewSettings = (ImageButton) row.findViewById(R.id.item_workspace_btn_settings);
-        LinearLayout widgetViewContent = (LinearLayout) row.findViewById(R.id.item_workspace_layout_widget);
-
-        itemHolder.title.setText(itemHolder.instance.getName());
-
-        itemViewSettings.setOnClickListener(new OnClickListener() {
+        final ItemHolder holder = (ItemHolder) rowView.getTag();
+        holder.title.setText(item.getName());
+        holder.title.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                final QuickAction quickAction = new QuickAction(context);
-
-
-                if(itemHolder.instance.getType() == Type.APPS){
-                    quickAction.addActionItem(new ActionItem(0, context.getString(R.string.dialog_item_settings_list_add_app)));
-                    quickAction.addActionItem(new ActionItem(1, context.getString(R.string.dialog_item_settings_list_rearrange_content)));
-                }
-                quickAction.addActionItem(new ActionItem(2, context.getString(R.string.dialog_item_settings_list_rename_item)));
-                quickAction.addActionItem(new ActionItem(3, context.getString(R.string.dialog_item_settings_list_remove_item)));
-
-                quickAction.show(v, true);
-                quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
-                    @Override
-                    public void onItemClick(QuickAction source, int pos, int actionId) {
-                        ActionItem actionItem = quickAction.getActionItem(pos);
-
-                        switch (actionItem.getActionId()) {
-                            case 0: // Add app
-                                addAppDialog(itemHolder);
-                                break;
-                            case 1: // Rearrange apps
-                                Toast.makeText(context, "Rearrange apps dialog", Toast.LENGTH_SHORT).show();
-                                break;
-                            case 2: // Rename item
-                                renameItemDialog(itemHolder);
-                                break;
-                            case 3: // Remove item
-                                removeItemDialog(itemHolder);
-                                break;
-                        }
-                    }
-                });
-                //showSettingsDialog(itemHolder);
+                showSettingsDialog(holder);
             }
         });
-
-        if (itemHolder.instance.getType() == Type.APPS) {
-            Collections.sort(itemHolder.instance.getApps(), new AppComparator());
-            ItemAppAdapter appsAdapter = new ItemAppAdapter(context, R.layout.list_item_app, itemHolder.instance.getApps());
-            itemHolder.appGrid.setExpanded(true);
-            itemHolder.appGrid.setAdapter(appsAdapter);
-            itemHolder.appGrid.setOnItemClickListener(new OnItemClickListener() {
-
+        if (holder.appGrid != null && item.getApps().size() > 0) {
+            Log.d(TAG, "Populating App Grid with " + item.getApps().size() + " items");
+            Collections.sort(item.getApps(), new AppComparator());
+            ArrayList<AppData> apps = new ArrayList<AppData>();
+            for (ScreenItemApp app : item.getApps()) {
+                apps.add(app.getAppData());
+            }
+            holder.appGrid.setExpanded(true);
+            holder.appGrid.setAdapter(new AppAdapter(context, R.layout.list_item_app, apps));
+            holder.appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View v,
-                                        int position, long id) {
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                     if (longPressed) {
                         longPressed = false;
                     } else {
-                        context.startActivity(itemHolder.instance.getApps().get(position).getAppData().getIntent());
+                        context.startActivity(holder.instance.getApps().get(position).getAppData().getIntent());
                     }
                 }
             });
-            itemHolder.appGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
-
+            holder.appGrid.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> parent,
-                                               View v, int position, long id) {
+                public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
                     longPressed = true;
-                    removeAppDialog(itemHolder, position);
+                    removeAppDialog(holder, position);
                     return false;
                 }
             });
-        } else if (itemHolder.instance.getType() == Type.WIDGET) {
-            widgetViewContent.addView(itemHolder.instance.getWidgetView());
         }
-        return row;
+        return rowView;
     }
 
     public class AppComparator implements Comparator<ScreenItemApp> {
@@ -149,19 +111,14 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
         }
     }
 
-    static class ScreenItemHolder {
-        ScreenItem instance;
-        TextView title;
-        CustomGrid appGrid;
-    }
 
-    private void showSettingsDialog(final ScreenItemHolder itemHolder) {
+    private void showSettingsDialog(final ItemHolder itemHolder) {
         final AlertDialog actualDialog;
         AlertDialog.Builder itemSettings = new AlertDialog.Builder(context);
         itemSettings.setTitle(context.getString(R.string.dialog_item_settings_title));
 
         ArrayList<String> settingsArray = new ArrayList<String>();
-        if(itemHolder.instance.getType() == Type.APPS){
+        if (itemHolder.instance.getType() == ScreenItem.Type.APPS) {
             settingsArray.add(context.getString(R.string.dialog_item_settings_list_add_app));
             settingsArray.add(context.getString(R.string.dialog_item_settings_list_rearrange_content));
         }
@@ -181,7 +138,7 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
 
         actualDialog = itemSettings.create();
         actualDialog.show();
-        settingsContent.setOnItemClickListener(new OnItemClickListener() {
+        settingsContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -204,7 +161,7 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
         });
     }
 
-    private void removeAppDialog(final ScreenItemHolder itemHolder, final int appPos) {
+    private void removeAppDialog(final ItemHolder itemHolder, final int appPos) {
         AlertDialog.Builder removeApp = new AlertDialog.Builder(context);
         removeApp.setTitle(context.getString(R.string.dialog_item_remove_app_title));
         removeApp.setMessage(context.getString(R.string.dialog_item_remove_app_message));
@@ -229,7 +186,7 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
         removeApp.show();
     }
 
-    private void removeItemDialog(final ScreenItemHolder itemHolder) {
+    private void removeItemDialog(final ItemHolder itemHolder) {
         AlertDialog.Builder removeApp = new AlertDialog.Builder(context);
         removeApp.setTitle(context.getString(R.string.dialog_item_remove_item_title));
         removeApp.setMessage(context.getString(R.string.dialog_item_remove_item_message));
@@ -251,19 +208,19 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
         removeApp.show();
     }
 
-    private void addAppDialog(final ScreenItemHolder itemHolder) {
+    private void addAppDialog(final ItemHolder itemHolder) {
         final AlertDialog listDialog;
         AlertDialog.Builder listBuilder = new AlertDialog.Builder(context);
         listBuilder.setTitle(context.getString(R.string.dialog_item_add_app_title));
 
         GridView appGrid = new GridView(context);
         appGrid.setNumColumns(3);
-        AppDataAdapter gridAdapter = new AppDataAdapter(context, R.layout.list_item_app, app.getApps());
+        AppAdapter gridAdapter = new AppAdapter(context, R.layout.list_item_app, app.getApps());
         appGrid.setAdapter(gridAdapter);
         listBuilder.setView(appGrid);
         listDialog = listBuilder.create();
 
-        appGrid.setOnItemClickListener(new OnItemClickListener() {
+        appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -296,7 +253,7 @@ public class ScreenItemAdapter extends ArrayAdapter<ScreenItem> {
         listDialog.show();
     }
 
-    private void renameItemDialog(final ScreenItemHolder itemHolder) {
+    private void renameItemDialog(final ItemHolder itemHolder) {
         AlertDialog.Builder listDialog = new AlertDialog.Builder(context);
         listDialog.setTitle(context.getString(R.string.dialog_item_rename_item_title));
         listDialog.setMessage(context.getString(R.string.dialog_item_rename_item_message));

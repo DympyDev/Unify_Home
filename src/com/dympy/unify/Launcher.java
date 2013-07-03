@@ -4,25 +4,40 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.*;
-import android.support.v4.view.PagerTabStrip;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
-import android.view.*;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.dympy.unify.model.AppData;
 import com.dympy.unify.model.Favorite;
 import com.dympy.unify.model.Screen;
 import com.dympy.unify.model.ScreenItem;
 import com.dympy.unify.model.ScreenItem.Type;
-import com.dympy.unify.model.ActionItem;
-import com.dympy.unify.view.AppDataAdapter;
-import com.dympy.unify.view.custom.QuickAction;
+import com.dympy.unify.view.AppAdapter;
+import com.dympy.unify.view.ItemAdapter;
+
+import java.util.ArrayList;
 
 public class Launcher extends FragmentActivity implements OnClickListener, View.OnLongClickListener {
-
-    private ViewPager screenPager;
+    private ArrayList<ScreenFragment> screenFragments;
+    private ViewPager workspacePager;
     private LauncherApplication app;
     private boolean longPressed = false;
 
@@ -30,21 +45,137 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
+        getActionBar().setIcon(R.drawable.ab_unify);
 
         app = (LauncherApplication) getApplication();
-
-        ScreenPagerAdapter screensAdapter = new ScreenPagerAdapter(getSupportFragmentManager());
-
-        PagerTabStrip workspaceScreenTabs = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
-        workspaceScreenTabs.setTabIndicatorColor(0x3B3B3B);
-        workspaceScreenTabs.setDrawFullUnderline(true);
-
-        screenPager = (ViewPager) findViewById(R.id.pager);
-        screenPager.setAdapter(screensAdapter);
-        if (screensAdapter.getCount() > 1) {
-            screenPager.setCurrentItem(1);
+        screenFragments = new ArrayList<ScreenFragment>();
+        for (Screen screen : app.getScreens()) {
+            ScreenFragment temp = new ScreenFragment();
+            Bundle args = new Bundle();
+            args.putInt("screen_id", screen.getScreenID());
+            temp.setArguments(args);
+            screenFragments.add(temp);
+            if(screen.getPosition() == 0){
+                getActionBar().setTitle(screen.getName());
+            }
         }
+
+        final WorkspaceAdapter adapter = new WorkspaceAdapter(getSupportFragmentManager());
+
+        workspacePager = (ViewPager) findViewById(R.id.pager);
+        workspacePager.setOffscreenPageLimit(app.getScreenArraySize());
+        workspacePager.setAdapter(adapter);
+        workspacePager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int i) {
+                getActionBar().setTitle(adapter.getPageTitle(i));
+            }
+        });
         initButtons();
+    }
+
+    /**
+     * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     * TODO: Research the difference between FragmentStatePagerAdapter and FragmentPagerAdapter (http://www.truiton.com/2013/06/android-fragmentpageradapter-vs-fragmentstatepageradapter/)
+     */
+    public class WorkspaceAdapter extends FragmentStatePagerAdapter {
+
+        public WorkspaceAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return screenFragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return screenFragments.size();
+        }
+
+
+        @Override
+        public int getItemPosition(Object object) {
+            //TODO: This should have extra checks (See http://stackoverflow.com/a/10852046)
+            return POSITION_NONE;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return screenFragments.get(position).getScreenTitle();
+        }
+    }
+
+    public class ScreenFragment extends ListFragment {
+        private ArrayList<ScreenItem> items = new ArrayList<ScreenItem>();
+        private String screenTitle = "";
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            int workspaceID = getArguments().getInt("screen_id");
+            LauncherApplication app = (LauncherApplication) getApplication();
+            items = app.getScreen(workspaceID).getItems();
+            screenTitle = app.getScreen(workspaceID).getName();
+        }
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+
+            Log.d("ScreenFragment", "onActivityCreated called");
+
+            getListView().setPadding(getResources().getDimensionPixelOffset(R.dimen.workspace_padding), 0,
+                    getResources().getDimensionPixelOffset(R.dimen.workspace_padding), 0);
+            getListView().setDivider(null);
+            getListView().setDividerHeight(getResources().getDimensionPixelOffset(R.dimen.item_workspace_divider));
+            getListView().setFooterDividersEnabled(true);
+            getListView().setVerticalScrollBarEnabled(false);
+
+            AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    getResources().getDimensionPixelOffset(R.dimen.workspace_padding));
+            View footer = new View(getActivity());
+            footer.setLayoutParams(layoutParams);
+            getListView().addFooterView(footer);
+
+            setListAdapter(new ItemAdapter(getActivity(), items.toArray(new ScreenItem[items.size()])));
+        }
+
+        public String getScreenTitle() {
+            return screenTitle;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.launcher, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_item:
+                addItemDialog();
+                return true;
+            case R.id.action_add_screen:
+                addScreenDialog();
+                return true;
+            case R.id.action_remove_screen:
+                removeScreen(app.getScreenByPosition(workspacePager.getCurrentItem()));
+                return true;
+            case R.id.action_rename_screen:
+                renameScreen(app.getScreenByPosition(workspacePager.getCurrentItem()));
+                return true;
+            case R.id.action_change_wallpaper:
+                Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
+                startActivity(Intent.createChooser(intent, "Select Wallpaper"));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -53,7 +184,7 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
     }
 
     public void updatePager() {
-        screenPager.getAdapter().notifyDataSetChanged();
+        workspacePager.getAdapter().notifyDataSetChanged();
     }
 
     private void renameScreen(final Screen screen) {
@@ -132,8 +263,8 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
             public void onClick(DialogInterface dialog, int which) {
                 ScreenItem tempItem = new ScreenItem(app);
                 tempItem.setName(itemName.getText().toString());
-                tempItem.setScreenID(app.getScreenByPosition(screenPager.getCurrentItem() - 1).getScreenID());
-                tempItem.setPosition(app.getScreenItemPosition(screenPager.getCurrentItem()));
+                tempItem.setScreenID(app.getScreenByPosition(workspacePager.getCurrentItem()).getScreenID());
+                tempItem.setPosition(app.getScreenItemPosition(workspacePager.getCurrentItem()));
                 switch (itemType.getCheckedRadioButtonId()) {
                     case R.id.dialog_add_item_app:
                         tempItem.setType(Type.APPS);
@@ -178,7 +309,7 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
 
         GridView appGrid = new GridView(this);
         appGrid.setNumColumns(3);
-        AppDataAdapter gridAdapter = new AppDataAdapter(this, R.layout.list_item_app, app.getApps());
+        AppAdapter gridAdapter = new AppAdapter(this, R.layout.list_item_app, app.getApps());
         appGrid.setAdapter(gridAdapter);
         listBuilder.setView(appGrid);
         listDialog = listBuilder.create();
@@ -206,7 +337,6 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
         ImageButton favorite3 = (ImageButton) findViewById(R.id.buttonbar_btn_fav3);
         ImageButton favorite4 = (ImageButton) findViewById(R.id.buttonbar_btn_fav4);
         ImageButton favorite5 = (ImageButton) findViewById(R.id.buttonbar_btn_fav5);
-        ImageButton btnSettings = (ImageButton) findViewById(R.id.buttonbar_btn_settings);
 
         allApps.setOnClickListener(this);
         favorite1.setOnClickListener(this);
@@ -219,30 +349,29 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
         favorite4.setOnLongClickListener(this);
         favorite5.setOnClickListener(this);
         favorite5.setOnLongClickListener(this);
-        btnSettings.setOnClickListener(this);
         setFavoriteBtns();
     }
 
-    private void setFavoriteBtns(){
+    private void setFavoriteBtns() {
         ImageButton favorite1 = (ImageButton) findViewById(R.id.buttonbar_btn_fav1);
         ImageButton favorite2 = (ImageButton) findViewById(R.id.buttonbar_btn_fav2);
         ImageButton favorite3 = (ImageButton) findViewById(R.id.buttonbar_btn_fav3);
         ImageButton favorite4 = (ImageButton) findViewById(R.id.buttonbar_btn_fav4);
         ImageButton favorite5 = (ImageButton) findViewById(R.id.buttonbar_btn_fav5);
 
-        if(app.getFavorite(0) != null){
+        if (app.getFavorite(0) != null) {
             favorite1.setImageDrawable(app.getFavorite(0).getContent().getIcon().getConstantState().newDrawable());
         }
-        if(app.getFavorite(1) != null){
+        if (app.getFavorite(1) != null) {
             favorite2.setImageDrawable(app.getFavorite(1).getContent().getIcon().getConstantState().newDrawable());
         }
-        if(app.getFavorite(2) != null){
+        if (app.getFavorite(2) != null) {
             favorite3.setImageDrawable(app.getFavorite(2).getContent().getIcon().getConstantState().newDrawable());
         }
-        if(app.getFavorite(3) != null){
+        if (app.getFavorite(3) != null) {
             favorite4.setImageDrawable(app.getFavorite(3).getContent().getIcon().getConstantState().newDrawable());
         }
-        if(app.getFavorite(4) != null){
+        if (app.getFavorite(4) != null) {
             favorite5.setImageDrawable(app.getFavorite(4).getContent().getIcon().getConstantState().newDrawable());
         }
     }
@@ -293,39 +422,6 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
                     startActivity(drawer);
                     overridePendingTransition(R.animator.zoom_enter, R.animator.zoom_exit);
                     break;
-                case R.id.buttonbar_btn_settings:
-                    QuickAction quickAction = new QuickAction(this);
-                    quickAction.addActionItem(new ActionItem(0, this.getString(R.string.action_add_item)));
-                    quickAction.addActionItem(new ActionItem(1, this.getString(R.string.action_add_screen)));
-                    quickAction.addActionItem(new ActionItem(2, this.getString(R.string.action_remove_screen)));
-                    quickAction.addActionItem(new ActionItem(3, this.getString(R.string.action_rename_screen)));
-                    quickAction.addActionItem(new ActionItem(4, this.getString(R.string.action_change_wallpaper)));
-
-                    quickAction.show(v, true);
-                    quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
-                        @Override
-                        public void onItemClick(QuickAction source, int pos, int actionId) {
-                            switch (actionId) {
-                                case 0:
-                                    addItemDialog();
-                                    break;
-                                case 1:
-                                    addScreenDialog();
-                                    break;
-                                case 2:
-                                    removeScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
-                                    break;
-                                case 3:
-                                    renameScreen(app.getScreenByPosition(screenPager.getCurrentItem() - 1));
-                                    break;
-                                case 4:
-                                    Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
-                                    startActivity(Intent.createChooser(intent, "Select Wallpaper"));
-                                    break;
-                            }
-                        }
-                    });
-                    break;
                 default:
                     Toast.makeText(this, "Something broke..", Toast.LENGTH_SHORT).show();
                     break;
@@ -356,64 +452,4 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
                 return false;
         }
     }
-
-
-    /**
-     * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class ScreenPagerAdapter extends FragmentStatePagerAdapter {
-
-        public ScreenPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new SocialScreenFragment();
-                default:
-                    return app.getScreenByPosition(position - 1).getView();
-
-            }
-        }
-
-        @Override
-        public int getCount() {
-            // We do a +1 because of the (now) static "Social" screen
-            return app.getScreenArraySize() + 1;
-        }
-
-
-        @Override
-        public int getItemPosition(Object object) {
-            //TODO: This should have extra checks (See http://stackoverflow.com/a/10852046)
-            return POSITION_NONE;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_social);
-                default:
-                    return app.getScreenByPosition(position - 1).getName();
-            }
-        }
-    }
-
-    public static class SocialScreenFragment extends Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            //TODO: Check, if the Scl. is installed, if so, show actual social stuff, if not, add download button
-            View rootView = inflater.inflate(R.layout.fragment_social, container, false);
-            TextView dummyTextView = (TextView) rootView.findViewById(R.id.fragment_social_txt_placeholder);
-            dummyTextView.setText("Social Screen placeholder");
-            return rootView;
-        }
-    }
-
 }

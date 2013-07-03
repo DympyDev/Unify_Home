@@ -10,15 +10,13 @@
 
             <corners
                     android:topLeftRadius="2dp"
-                    android:topRightRadius="2dp"
-                    android:bottomLeftRadius="2dp"
-                    android:bottomRightRadius="2dp"/>
+                    android:topRightRadius="2dp"/>
 
             <padding
                     android:left="3dp"
                     android:top="3dp"
                     android:right="3dp"
-                    android:bottom="3dp"/>
+                    android:bottom="0.5dp"/>
 
         </shape>
     </item>

@@ -2,29 +2,15 @@ package com.dympy.unify.model;
 
 import java.util.ArrayList;
 
-import com.dympy.unify.LauncherApplication;
-import com.dympy.unify.R;
-import com.dympy.unify.view.ScreenItemAdapter;
-
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-
 public class Screen {
 
     private int screenID;
     private String name;
     private int position;
     private ArrayList<ScreenItem> items;
-    private ScreenFragment screenContent;
 
     public Screen() {
         items = new ArrayList<ScreenItem>();
-        screenContent = null;
     }
 
     public int getScreenID() {
@@ -67,46 +53,9 @@ public class Screen {
         this.items.remove(item);
     }
 
-    public Fragment getView() {
-        if (screenContent == null) {
-            screenContent = new ScreenFragment();
-            screenContent.setWorkspaceID(getScreenID());
-        }
-        return screenContent;
-    }
-
     public void updateContent(Screen screen) {
         this.position = screen.getPosition();
         this.name = screen.getName();
         this.items = screen.getItems();
     }
-
-    @SuppressLint("ValidFragment")
-    private class ScreenFragment extends Fragment {
-        private int workspaceID = 0;
-        private LauncherApplication application;
-
-        public ScreenFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            application = (LauncherApplication) getActivity().getApplication();
-            View rootView = inflater.inflate(R.layout.fragment_workspace, container, false);
-
-            ListView workspaceItems = (ListView) rootView.findViewById(R.id.fragment_workspace_list);
-
-            Screen items = application.getScreen(workspaceID);
-            ScreenItemAdapter workspaceAdapter = new ScreenItemAdapter(this.getActivity(), R.layout.list_item_workspace, items.getItems());
-
-            workspaceItems.setAdapter(workspaceAdapter);
-            return rootView;
-        }
-
-        public void setWorkspaceID(int id) {
-            this.workspaceID = id;
-        }
-
-    }
-
 }

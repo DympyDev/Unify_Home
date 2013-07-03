@@ -17,7 +17,7 @@
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
+                android:background="@drawable/item"/>
 
         <ImageButton
                 android:layout_width="48dp"
@@ -26,7 +26,7 @@
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
+                android:background="@drawable/item"/>
 
         <ImageButton
                 android:layout_width="48dp"
@@ -35,7 +35,7 @@
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
+                android:background="@drawable/item"/>
 
         <ImageButton
                 android:layout_width="48dp"
@@ -44,7 +44,7 @@
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
+                android:background="@drawable/item"/>
 
         <ImageButton
                 android:layout_width="48dp"
@@ -53,7 +53,7 @@
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
+                android:background="@drawable/item"/>
 
         <ImageButton
                 android:layout_width="48dp"
@@ -62,7 +62,7 @@
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
+                android:background="@drawable/item"/>
 
         <ImageButton
                 android:layout_width="48dp"
@@ -71,7 +71,7 @@
                 android:contentDescription="@string/buttonbar_shortcut"
                 android:src="@drawable/ic_bar_add"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
+                android:background="@drawable/item"/>
     </LinearLayout>
 
     <LinearLayout
@@ -87,16 +87,7 @@
                 android:contentDescription="@string/buttonbar_drawer"
                 android:src="@drawable/ic_bar_apps"
                 android:scaleType="fitCenter"
-                android:background="@drawable/popup_item"/>
-
-        <ImageButton
-                android:layout_width="38dp"
-                android:layout_height="fill_parent"
-                android:id="@+id/buttonbar_btn_settings"
-                android:contentDescription="@string/buttonbar_settings"
-                android:background="@drawable/popup_item"
-                android:src="@drawable/ic_bar_settings"
-                android:scaleType="fitCenter"/>
+                android:background="@drawable/item"/>
     </LinearLayout>
 
 </LinearLayout>

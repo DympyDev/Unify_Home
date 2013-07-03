@@ -17,7 +17,7 @@
         android:title="@string/action_change_wallpaper"/>
     <item
         android:id="@+id/action_rearrange"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/action_rearrange"
         android:icon="@android:drawable/ic_menu_sort_by_size">
         <menu>
@@ -33,7 +33,7 @@
     </item>
     <item
         android:id="@+id/action_add"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/action_add"
         android:icon="@android:drawable/ic_menu_add">
         <menu>

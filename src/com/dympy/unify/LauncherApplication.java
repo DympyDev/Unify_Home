@@ -69,7 +69,7 @@ public class LauncherApplication extends Application {
         for (ResolveInfo info : packages) {
             AppData temp = new AppData();
             temp.setName(info.loadLabel(pm).toString());
-            Drawable icon = info.loadIcon(pm);
+            Drawable icon = info.activityInfo.loadIcon(pm);
             icon.setBounds(
                     0,
                     0,
@@ -172,6 +172,10 @@ public class LauncherApplication extends Application {
     /*
      * Screen functions
      */
+    public ArrayList<Screen> getScreens() {
+        return screenArray;
+    }
+
     public Screen getScreen(int screenID) {
         for (int i = 0; i < screenArray.size(); i++) {
             if (screenArray.get(i).getScreenID() == screenID) return screenArray.get(i);
@@ -188,7 +192,7 @@ public class LauncherApplication extends Application {
     }
 
     public int getScreenItemPosition(int screenID) {
-        return screenArray.get(screenID - 1).getItems().size();
+        return screenArray.get(screenID).getItems().size();
     }
 
     public void addScreen(Screen temp) {

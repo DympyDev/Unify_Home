@@ -9,4 +9,7 @@
     <dimen name="icon_size">48dp</dimen>
     <dimen name="app_item_height">90dp</dimen>
 
+    <dimen name="workspace_padding">10dp</dimen>
+    <dimen name="workspace_divider">25dp</dimen>
+
 </resources>
