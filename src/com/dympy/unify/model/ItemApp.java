@@ -1,6 +1,6 @@
 package com.dympy.unify.model;
 
-public class ScreenItemApp {
+public class ItemApp {
 	private int itemID;
 	private String name;
 	private String packageName;
@@ -8,7 +8,7 @@ public class ScreenItemApp {
 	private int position;
 	private AppData appData;
 
-	public ScreenItemApp() {
+	public ItemApp() {
 
 	}
 

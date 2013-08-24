@@ -32,7 +32,7 @@ public class Drawer extends FragmentActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         application = (LauncherApplication) getApplication();
 
-        int totalApps = getResources().getInteger(R.integer.drawer_app_columns) * 6;
+        int totalApps = getResources().getInteger(R.integer.drawer_app_columns) * getResources().getInteger(R.integer.drawer_app_rows);
         int i = 1;
         for (; i <= application.getApps().size(); i++) {
             if (i % totalApps == 0) {
@@ -81,7 +81,6 @@ public class Drawer extends FragmentActivity {
 
         @Override
         public int getItemPosition(Object object) {
-            //TODO: This should have extra checks (See http://stackoverflow.com/a/10852046)
             return POSITION_NONE;
         }
     }

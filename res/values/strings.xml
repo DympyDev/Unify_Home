@@ -24,6 +24,8 @@
     <string name="dialog_btn_cancel">Cancel</string>
     <string name="dialog_btn_yes">Yes</string>
     <string name="dialog_btn_no">No</string>
+    <string name="dialog_btn_next">Next</string>
+    <string name="dialog_btn_back">Back</string>
 
     <string name="dialog_add_screen_title">Add Screen</string>
     <string name="dialog_add_screen_edit_hint">Screen name</string>

@@ -1,5 +1,9 @@
 package com.dympy.unify.model;
 
+import android.util.Log;
+
+import com.dympy.unify.controller.ArrayHelper;
+
 import java.util.ArrayList;
 
 public class Screen {
@@ -7,10 +11,10 @@ public class Screen {
     private int screenID;
     private String name;
     private int position;
-    private ArrayList<ScreenItem> items;
+    ArrayHelper<Item> items;
 
     public Screen() {
-        items = new ArrayList<ScreenItem>();
+        items = new ArrayHelper<Item>();
     }
 
     public int getScreenID() {
@@ -37,19 +41,19 @@ public class Screen {
         this.position = position;
     }
 
-    public ArrayList<ScreenItem> getItems() {
+    public ArrayHelper<Item> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<ScreenItem> items) {
+    public void setItems(ArrayHelper<Item> items) {
         this.items = items;
     }
 
-    public void addItem(ScreenItem item) {
+    public void addItem(Item item) {
         this.items.add(item);
     }
 
-    public void removeItem(ScreenItem item) {
+    public void removeItem(Item item) {
         this.items.remove(item);
     }
 

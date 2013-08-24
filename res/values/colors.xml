@@ -25,4 +25,17 @@
     <color name="Holo.Red.Dark">#CC0000</color>
     <color name="Holo.Text">#555555</color>
 
+    <array name="item_accents">
+        <item>@color/Holo.Blue.Light</item>
+        <item>@color/Holo.Purple.Light</item>
+        <item>@color/Holo.Green.Light</item>
+        <item>@color/Holo.Orange.Light</item>
+        <item>@color/Holo.Red.Light</item>
+        <item>@color/Holo.Blue.Dark</item>
+        <item>@color/Holo.Purple.Dark</item>
+        <item>@color/Holo.Green.Dark</item>
+        <item>@color/Holo.Orange.Dark</item>
+        <item>@color/Holo.Red.Dark</item>
+    </array>
+
 </resources>

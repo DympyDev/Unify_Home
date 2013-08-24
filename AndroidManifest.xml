@@ -12,8 +12,7 @@
             android:name=".LauncherApplication"
             android:icon="@drawable/ic_launcher"
             android:label="@string/title_app"
-            android:theme="@style/AppTheme"
-            android:hardwareAccelerated="true">
+            android:theme="@style/AppTheme">
         <activity
                 android:name="com.dympy.unify.Launcher"
                 android:label="@string/title_app"

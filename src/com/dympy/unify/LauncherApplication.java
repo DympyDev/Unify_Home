@@ -18,25 +18,25 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.dympy.unify.controller.ArrayHelper;
 import com.dympy.unify.controller.DatabaseHandler;
 import com.dympy.unify.model.AppData;
 import com.dympy.unify.model.Favorite;
+import com.dympy.unify.model.Item;
 import com.dympy.unify.model.Screen;
-import com.dympy.unify.model.ScreenItem;
-import com.dympy.unify.model.ScreenItemApp;
 
 public class LauncherApplication extends Application {
 
-    //private static String TAG = "LAUNCHERAPPLICATION";
+    private static String TAG = "LAUNCHERAPPLICATION";
 
     private ArrayList<AppData> appsArray;
-    private ArrayList<Favorite> favArray;
     private List<AppWidgetProviderInfo> widgetsArray;
-    private ArrayList<Screen> screenArray;
     public AppWidgetManager widgetManager;
-    public boolean hasLoadedApps = false;
     private Boolean firstTime = null;
     private DatabaseHandler db;
+
+    public static ArrayHelper<Screen> SCREENS;
+    public static ArrayHelper<Favorite> FAVORITES;
 
     @Override
     public void onCreate() {
@@ -56,8 +56,10 @@ public class LauncherApplication extends Application {
      */
     private void initVars() {
         appsArray = new ArrayList<AppData>();
-        screenArray = new ArrayList<Screen>();
         db = new DatabaseHandler(this);
+
+        SCREENS = new ArrayHelper<Screen>();
+        FAVORITES = new ArrayHelper<Favorite>();
     }
 
     /*
@@ -88,7 +90,6 @@ public class LauncherApplication extends Application {
             addApp(temp);
         }
         sortApps();
-        hasLoadedApps = true;
     }
 
     private void populateWidgets() {
@@ -103,18 +104,35 @@ public class LauncherApplication extends Application {
             mainScreen.setName("Main");
             mainScreen.setPosition(0);
 
-            addScreen(mainScreen);
+            SCREENS.setDB(db);
+            SCREENS.add(mainScreen);
+        } else {
+            SCREENS = db.getScreens();
+            SCREENS.setDB(db);
         }
-        screenArray = db.getScreens();
-        Collections.sort(screenArray, new ScreenComparator());
-        for (int i = 0; i < screenArray.size(); i++) {
-            Collections.sort(screenArray.get(i).getItems(), new ScreenItemComparator());
+        SCREENS.sort();
+        //TODO: Should I do this in a cleaner way?
+        for (int i = 0; i < SCREENS.size(); i++) {
+            SCREENS.get(i).getItems().sort();
+            SCREENS.get(i).getItems().setDB(db);
+            for (int j = 0; j < SCREENS.get(i).getItems().size(); j++) {
+                SCREENS.get(i).getItems().get(j).getApps().sort();
+                SCREENS.get(i).getItems().get(j).getApps().setDB(db);
+            }
         }
     }
 
     private void populateFavorite() {
-        favArray = db.getFavorites();
-        Collections.sort(favArray, new FavoriteComparator());
+        FAVORITES = db.getFavorites();
+        FAVORITES.sort();
+        FAVORITES.setDB(db);
+    }
+
+    public void forceReload() {
+        ArrayList<AppData> oldApps = appsArray;
+        appsArray.clear();
+        populateApps();
+        //TODO: loop through both arrays and update content where needed (App Drawer, Databases, ScreenItems)
     }
 
     /*
@@ -149,10 +167,9 @@ public class LauncherApplication extends Application {
         }
     }
 
-	/*
+    /*
      * Widget functions
-	 */
-
+     */
     public List<AppWidgetProviderInfo> getWidgets() {
         return widgetsArray;
     }
@@ -172,126 +189,77 @@ public class LauncherApplication extends Application {
     /*
      * Screen functions
      */
-    public ArrayList<Screen> getScreens() {
-        return screenArray;
+    public void addScreen(Screen screen) {
+        SCREENS.add(screen);
+        SCREENS.get(SCREENS.size() - 1).getItems().setDB(db);
     }
 
     public Screen getScreen(int screenID) {
-        for (int i = 0; i < screenArray.size(); i++) {
-            if (screenArray.get(i).getScreenID() == screenID) return screenArray.get(i);
+        for (int i = 0; i < SCREENS.size(); i++) {
+            if (SCREENS.get(i).getScreenID() == screenID) return SCREENS.get(i);
         }
         return null;
     }
 
-    public Screen getScreenByPosition(int position) {
-        return screenArray.get(position);
-    }
-
-    public int getScreenArraySize() {
-        return screenArray.size();
-    }
-
     public int getScreenItemPosition(int screenID) {
-        return screenArray.get(screenID).getItems().size();
-    }
-
-    public void addScreen(Screen temp) {
-        screenArray.add(temp);
-        db.addScreen(temp);
+        return SCREENS.get(screenID).getItems().size();
     }
 
     public void removeScreen(Screen temp) {
-        for (int i = 0; i < screenArray.size(); i++) {
-            if (screenArray.get(i).getScreenID() == temp.getScreenID()) {
-                screenArray.remove(i);
+        for (int i = 0; i < SCREENS.size(); i++) {
+            if (SCREENS.get(i).getScreenID() == temp.getScreenID()) {
+                SCREENS.remove(i);
             }
         }
-        Collections.sort(screenArray, new ScreenComparator());
-        for (int i = 0; i < screenArray.size(); i++) {
-            screenArray.get(i).setPosition(i);
-            updateScreen(screenArray.get(i));
+        SCREENS.sort();
+        for (int i = 0; i < SCREENS.size(); i++) {
+            SCREENS.get(i).setPosition(i);
+            updateScreen(SCREENS.get(i));
         }
-        db.removeScreen(temp);
     }
 
     public void updateScreen(Screen temp) {
-        for (int i = 0; i < screenArray.size(); i++) {
-            if (screenArray.get(i).getScreenID() == temp.getScreenID())
-                screenArray.get(i).updateContent(temp);
+        for (int i = 0; i < SCREENS.size(); i++) {
+            if (SCREENS.get(i).getScreenID() == temp.getScreenID())
+                SCREENS.get(i).updateContent(temp);
         }
         db.updateScreen(temp);
     }
 
-    public class ScreenComparator implements Comparator<Screen> {
-        @Override
-        public int compare(Screen screen, Screen screen2) {
-            return screen.getPosition() > screen2.getPosition() ? +1 : screen.getPosition() < screen2.getPosition() ? -1 : 0;
-        }
-    }
-
-	/*
-     * ScreenItem functions
-	 */
-
-    public void addScreenItem(ScreenItem item) {
+    /*
+     * Item functions
+     */
+    public void addScreenItem(Item item) {
+        item.getApps().sort();
+        item.getApps().setDB(db);
         getScreen(item.getScreenID()).addItem(item);
-        db.addScreenItem(item);
-        //getScreen(item.getScreenID()).refreshContent();
     }
 
-    public void removeScreenItem(ScreenItem item) {
+    public void removeScreenItem(Item item) {
         for (int i = 0; i < getScreen(item.getScreenID()).getItems().size(); i++) {
             if (getScreen(item.getScreenID()).getItems().get(i).getItemID() == item.getItemID()) {
                 getScreen(item.getScreenID()).getItems().remove(i);
             }
         }
-        Collections.sort(getScreen(item.getScreenID()).getItems(), new ScreenItemComparator());
+        getScreen(item.getScreenID()).getItems().sort();
         for (int i = 0; i < getScreen(item.getScreenID()).getItems().size(); i++) {
             getScreen(item.getScreenID()).getItems().get(i).setPosition(i);
             updateScreenItem(getScreen(item.getScreenID()).getItems().get(i));
         }
-        db.removeScreenItem(item);
-        //getScreen(item.getScreenID()).refreshContent();
     }
 
-    public void updateScreenItem(ScreenItem item) {
+    public void updateScreenItem(Item item) {
         db.updateScreenItem(item);
-    }
-
-    public class ScreenItemComparator implements Comparator<ScreenItem> {
-        @Override
-        public int compare(ScreenItem screen, ScreenItem screen2) {
-            return screen.getPosition() > screen2.getPosition() ? +1 : screen.getPosition() < screen2.getPosition() ? -1 : 0;
-        }
-    }
-
-	/*
-     * ScreenItemApp functions
-	 */
-
-    public void addScreenItemApp(ScreenItemApp app) {
-        db.addScreenItemApp(app);
-    }
-
-    public void removeScreenItemApp(ScreenItemApp app) {
-        //TODO: Position updating of the other apps
-        db.removeScreenItemApp(app);
     }
 
     /*
      * Favorite functions
      */
-    public ArrayList<Favorite> getFavorites() {
-        return favArray;
-    }
-
     public Favorite getFavorite(int pos) {
         Favorite fav = null;
-        for (int i = 0; i < favArray.size(); i++) {
-            Log.d("Favorite", "Checking '" + favArray.get(i).getFavPos() + "' with '" + pos + "'");
-            if (favArray.get(i).getFavPos() == pos) {
-                Log.d("Favorite", "Found a match");
-                fav = favArray.get(i);
+        for (int i = 0; i < FAVORITES.size(); i++) {
+            if (FAVORITES.get(i).getFavPos() == pos) {
+                fav = FAVORITES.get(i);
             }
         }
         return fav;
@@ -299,26 +267,14 @@ public class LauncherApplication extends Application {
 
     public void setFavorite(Favorite newFav) {
         boolean newPos = true;
-        for (int i = 0; i < favArray.size(); i++) {
-            if (favArray.get(i).getFavPos() == newFav.getFavPos()) {
-                Log.d("Favorite", "Updating favorite");
+        for (int i = 0; i < FAVORITES.size(); i++) {
+            if (FAVORITES.get(i).getFavPos() == newFav.getFavPos()) {
                 newPos = false;
-                favArray.set(i, newFav);
-                db.updateFavorite(newFav);
+                FAVORITES.set(i, newFav);
             }
         }
         if (newPos) {
-            Log.d("Favorite", "Adding favorite");
-            favArray.add(newFav);
-            db.addFavorite(newFav);
-        }
-    }
-
-    public class FavoriteComparator implements Comparator<Favorite> {
-
-        @Override
-        public int compare(Favorite favorite, Favorite favorite2) {
-            return favorite.getFavPos() - favorite2.getFavPos();
+            FAVORITES.add(newFav);
         }
     }
 

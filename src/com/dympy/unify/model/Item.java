@@ -7,9 +7,12 @@ import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 
-public class ScreenItem {
+import com.dympy.unify.R;
+import com.dympy.unify.controller.ArrayHelper;
+
+public class Item {
     public enum Type {
-        WIDGET, APPS
+        WIDGET, APPS, UNDEFINED
     }
 
     private int itemID;
@@ -17,12 +20,14 @@ public class ScreenItem {
     private String name;
     private Type type;
     private int position;
-    private ArrayList<ScreenItemApp> apps;
+    private int accent;
+    private ArrayHelper<ItemApp> apps;
     private AppWidgetProviderInfo widget;
     private Context context;
 
-    public ScreenItem(Context context) {
+    public Item(Context context) {
         this.context = context;
+        this.type = Type.UNDEFINED;
     }
 
     public int getItemID() {
@@ -60,7 +65,9 @@ public class ScreenItem {
                 // TODO: Not yet implemented
                 break;
             case APPS:
-                this.apps = new ArrayList<ScreenItemApp>();
+                if (this.apps == null) {
+                    this.apps = new ArrayHelper<ItemApp>();
+                }
                 break;
         }
     }
@@ -73,19 +80,32 @@ public class ScreenItem {
         this.position = position;
     }
 
-    public ArrayList<ScreenItemApp> getApps() {
+    public int getAccent() {
+        return accent;
+    }
+
+    public int getAccentColor() {
+        int[] accents = context.getResources().getIntArray(R.array.item_accents);
+        return accents[accent];
+    }
+
+    public void setAccent(int accent) {
+        this.accent = accent;
+    }
+
+    public ArrayHelper<ItemApp> getApps() {
         return apps;
     }
 
-    public void setApps(ArrayList<ScreenItemApp> apps) {
+    public void setApps(ArrayHelper<ItemApp> apps) {
         this.apps = apps;
     }
 
-    public void addApp(ScreenItemApp app) {
+    public void addApp(ItemApp app) {
         this.apps.add(app);
     }
 
-    public void removeApp(ScreenItemApp app) {
+    public void removeApp(ItemApp app) {
         this.apps.remove(app);
     }
 
@@ -106,7 +126,7 @@ public class ScreenItem {
         return hostView;
     }
 
-    public void updateContent(ScreenItem item) {
+    public void updateContent(Item item) {
         this.name = item.getName();
         this.position = item.getPosition();
         this.type = item.getType();

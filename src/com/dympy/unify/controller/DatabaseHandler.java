@@ -12,10 +12,10 @@ import android.util.Log;
 import com.dympy.unify.LauncherApplication;
 import com.dympy.unify.model.AppData;
 import com.dympy.unify.model.Favorite;
+import com.dympy.unify.model.Item;
+import com.dympy.unify.model.ItemApp;
 import com.dympy.unify.model.Screen;
-import com.dympy.unify.model.ScreenItem;
-import com.dympy.unify.model.ScreenItemApp;
-import com.dympy.unify.model.ScreenItem.Type;
+import com.dympy.unify.model.Item.Type;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -23,13 +23,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private LauncherApplication app;
     /*
      * The Database Version, following is some kind of changelog:
+     * V3:  - Added the color column to the items
      * V2:  - Added the favorites table
      *      - Changed a lot of functions to work a bit more nicely
      * V1:  - Initial creation of database
      *      - Created the Screens, ScreenItems and ScreenItemApps tables
      *      - Created almost all CRUD functions
      */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database name
     private static final String DATABASE_NAME = "endlessDB.db";
@@ -88,6 +89,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Item Position, INTEGER
      */
     private static final String COL_ITEM_POSITION = "item_pos";
+    /**
+     * Item Accent Color, INTEGER
+     */
+    private static final String COL_ITEM_COLOR = "item_color";
 
     /**
      * Item ID, INTEGER
@@ -147,7 +152,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + "(" + COL_ITEM_ID + " INTEGER PRIMARY KEY, "
                 + COL_ITEM_SCREEN + " INTEGER, " + COL_ITEM_NAME + " TEXT, "
                 + COL_ITEM_TYPE + " INTEGER, " + COL_ITEM_POSITION
-                + " INTEGER)";
+                + " INTEGER, " + COL_ITEM_COLOR + " INTEGER)";
         db.execSQL(CREATE_SCREEN_ITEM_TABLE);
 
         // Create the App Item Table
@@ -172,7 +177,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         ArrayList<Screen> oldScreens = getScreens(db);
         ArrayList<Favorite> oldFavorites = null;
-        if (DATABASE_VERSION > 2) {
+        if (db.getVersion() > 2) {
             oldFavorites = getFavorites(db);
         }
 
@@ -216,41 +221,42 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         screen.setScreenID(screenID);
 
         // Creating the table entries for the ScreenItems
-        for (ScreenItem item : screen.getItems()) {
+        for (Item item : screen.getItems()) {
             item.setScreenID(screenID);
             addScreenItem(item, db);
         }
     }
 
-    public void addScreenItem(ScreenItem item) {
+    public void addScreenItem(Item item) {
         addScreenItem(item, this.getWritableDatabase());
         this.getWritableDatabase().close();
     }
 
-    public void addScreenItem(ScreenItem item, SQLiteDatabase db) {
+    public void addScreenItem(Item item, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(COL_ITEM_SCREEN, item.getScreenID());
         values.put(COL_ITEM_NAME, item.getName());
         values.put(COL_ITEM_TYPE, (item.getType() == Type.APPS ? 0 : 1));
         values.put(COL_ITEM_POSITION, item.getPosition());
+        values.put(COL_ITEM_COLOR, item.getAccent());
 
         // Inserting Row
         int itemID = (int) db.insert(TABLE_SCREEN_ITEM, null, values);
         item.setItemID(itemID);
 
         // Creating the table entries for the ScreenItemApps
-        for (ScreenItemApp app : item.getApps()) {
+        for (ItemApp app : item.getApps()) {
             app.setItemID(itemID);
             addScreenItemApp(app, db);
         }
     }
 
-    public void addScreenItemApp(ScreenItemApp app) {
+    public void addScreenItemApp(ItemApp app) {
         addScreenItemApp(app, this.getWritableDatabase());
         this.getWritableDatabase().close();
     }
 
-    public void addScreenItemApp(ScreenItemApp app, SQLiteDatabase db) {
+    public void addScreenItemApp(ItemApp app, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(COL_APP_ITEM, app.getItemID());
         values.put(COL_APP_NAME, app.getName());
@@ -281,12 +287,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /*
      * The Return functions
      */
-    public ArrayList<Screen> getScreens() {
+    public ArrayHelper<Screen> getScreens() {
         return getScreens(this.getWritableDatabase());
     }
 
-    public ArrayList<Screen> getScreens(SQLiteDatabase db) {
-        ArrayList<Screen> screenList = new ArrayList<Screen>();
+    public ArrayHelper<Screen> getScreens(SQLiteDatabase db) {
+        ArrayHelper<Screen> screenList = new ArrayHelper<Screen>();
         String selectQuery = "SELECT * FROM " + TABLE_SCREEN;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -305,12 +311,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return screenList;
     }
 
-    public ArrayList<ScreenItem> getScreenItems(int screenID) {
+    public ArrayHelper<Item> getScreenItems(int screenID) {
         return getScreenItems(screenID, this.getWritableDatabase());
     }
 
-    public ArrayList<ScreenItem> getScreenItems(int screenID, SQLiteDatabase db) {
-        ArrayList<ScreenItem> screenItemList = new ArrayList<ScreenItem>();
+    public ArrayHelper<Item> getScreenItems(int screenID, SQLiteDatabase db) {
+        ArrayHelper<Item> screenItemList = new ArrayHelper<Item>();
         String selectQuery = "SELECT * FROM " + TABLE_SCREEN_ITEM + " WHERE "
                 + COL_ITEM_SCREEN + "=" + screenID;
 
@@ -318,13 +324,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                ScreenItem screenItem = new ScreenItem(context);
+                Item screenItem = new Item(context);
                 screenItem.setItemID(cursor.getInt(0));
                 screenItem.setScreenID(cursor.getInt(1));
                 screenItem.setName(cursor.getString(2));
                 screenItem.setType((cursor.getInt(3) == 0 ? Type.APPS
                         : Type.WIDGET));
                 screenItem.setPosition(cursor.getInt(4));
+                if (db.getVersion() >= 3) {
+                    screenItem.setAccent(cursor.getInt(5));
+                } else {
+                    screenItem.setAccent(0);
+                }
                 screenItem.setApps(getScreenItemApps(screenItem.getItemID(), db));
 
                 screenItemList.add(screenItem);
@@ -334,12 +345,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<ScreenItemApp> getScreenItemApps(int itemID) {
+    public ArrayHelper<ItemApp> getScreenItemApps(int itemID) {
         return getScreenItemApps(itemID, this.getWritableDatabase());
     }
 
-    public ArrayList<ScreenItemApp> getScreenItemApps(int itemID, SQLiteDatabase db) {
-        ArrayList<ScreenItemApp> itemAppList = new ArrayList<ScreenItemApp>();
+    public ArrayHelper<ItemApp> getScreenItemApps(int itemID, SQLiteDatabase db) {
+        ArrayHelper<ItemApp> itemAppList = new ArrayHelper<ItemApp>();
         String selectQuery = "SELECT * FROM " + TABLE_SCREEN_ITEM_APP
                 + " WHERE " + COL_APP_ITEM + "=" + itemID;
 
@@ -347,7 +358,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                ScreenItemApp itemApp = new ScreenItemApp();
+                ItemApp itemApp = new ItemApp();
                 itemApp.setItemID(cursor.getInt(0));
                 itemApp.setName(cursor.getString(1));
                 itemApp.setPackageName(cursor.getString(2));
@@ -362,12 +373,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return itemAppList;
     }
 
-    public ArrayList<Favorite> getFavorites() {
+    public ArrayHelper<Favorite> getFavorites() {
         return getFavorites(this.getWritableDatabase());
     }
 
-    public ArrayList<Favorite> getFavorites(SQLiteDatabase db) {
-        ArrayList<Favorite> favs = new ArrayList<Favorite>();
+    public ArrayHelper<Favorite> getFavorites(SQLiteDatabase db) {
+        ArrayHelper<Favorite> favs = new ArrayHelper<Favorite>();
         String selectQuery = "SELECT * FROM " + TABLE_FAVORITE;
 
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -399,30 +410,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void removeScreen(Screen screen, SQLiteDatabase db) {
         db.delete(TABLE_SCREEN, COL_SCREEN_ID + " = ?",
                 new String[]{String.valueOf(screen.getScreenID())});
-        for (ScreenItem item : screen.getItems()) {
+        for (Item item : screen.getItems()) {
             removeScreenItem(item, db);
         }
     }
 
-    public void removeScreenItem(ScreenItem item) {
+    public void removeScreenItem(Item item) {
         removeScreenItem(item, this.getWritableDatabase());
         this.getWritableDatabase().close();
     }
 
-    public void removeScreenItem(ScreenItem item, SQLiteDatabase db) {
+    public void removeScreenItem(Item item, SQLiteDatabase db) {
         db.delete(TABLE_SCREEN_ITEM, COL_ITEM_ID + " = ?",
                 new String[]{String.valueOf(item.getItemID())});
-        for (ScreenItemApp app : item.getApps()) {
+        for (ItemApp app : item.getApps()) {
             removeScreenItemApp(app, db);
         }
     }
 
-    public void removeScreenItemApp(ScreenItemApp app) {
+    public void removeScreenItemApp(ItemApp app) {
         removeScreenItemApp(app, this.getWritableDatabase());
         this.getWritableDatabase().close();
     }
 
-    public void removeScreenItemApp(ScreenItemApp app, SQLiteDatabase db) {
+    public void removeScreenItemApp(ItemApp app, SQLiteDatabase db) {
         db.delete(TABLE_SCREEN_ITEM_APP, COL_APP_ITEM + "=" + app.getItemID()
                 + " AND " + COL_APP_PACKAGE + "='" + app.getPackageName()
                 + "' AND " + COL_APP_ACTIVITY + "='" + app.getActivityName()
@@ -455,27 +466,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{String.valueOf(screen.getScreenID())});
     }
 
-    public void updateScreenItem(ScreenItem item) {
+    public void updateScreenItem(Item item) {
         updateScreenItem(item, this.getWritableDatabase());
         this.getWritableDatabase().close();
     }
 
-    public void updateScreenItem(ScreenItem item, SQLiteDatabase db) {
+    public void updateScreenItem(Item item, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(COL_ITEM_NAME, item.getName());
         values.put(COL_ITEM_TYPE, (item.getType() == Type.APPS ? 0 : 1));
         values.put(COL_ITEM_POSITION, item.getPosition());
+        values.put(COL_ITEM_COLOR, item.getAccent());
 
         db.update(TABLE_SCREEN_ITEM, values, COL_ITEM_ID + " = ?",
                 new String[]{String.valueOf(item.getItemID())});
     }
 
-    public void updateAppItem(ScreenItemApp app) {
+    public void updateAppItem(ItemApp app) {
         updateAppItem(app, this.getWritableDatabase());
         this.getWritableDatabase().close();
     }
 
-    public void updateAppItem(ScreenItemApp app, SQLiteDatabase db) {
+    public void updateAppItem(ItemApp app, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(COL_ITEM_POSITION, app.getPosition());
 

@@ -9,4 +9,5 @@
           android:gravity="center_horizontal"
           android:singleLine="false"
           android:text="@string/title_app"
-          android:textAppearance="@style/DefaultTextStyle.AppFont"/>
+          android:textAppearance="@style/DefaultTextStyle.AppFont"
+          android:textColor="@color/Black"/>

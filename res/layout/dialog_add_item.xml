@@ -1,45 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="5dp">
+
 
     <EditText
-        android:id="@+id/dialog_add_item_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/dialog_add_item_edit_hint" >
+            android:id="@+id/dialog_add_item_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/dialog_add_item_edit_hint"
+            android:inputType="textCapSentences">
 
-        <requestFocus />
+        <requestFocus/>
     </EditText>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_add_item_radio_hint"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:id="@+id/dialog_add_item_typetext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_add_item_radio_hint"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <RadioGroup
-        android:id="@+id/dialog_add_item_radiogroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+            android:id="@+id/dialog_add_item_radiogroup"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="2">
 
         <RadioButton
-            android:id="@+id/dialog_add_item_app"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/dialog_add_item_radio_app" />
+                android:id="@+id/dialog_add_item_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/dialog_add_item_radio_app"
+                android:layout_weight="1"/>
 
         <RadioButton
-            android:id="@+id/dialog_add_item_widget"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:enabled="false"
-            android:text="@string/dialog_add_item_radio_widget" />
-
+                android:id="@+id/dialog_add_item_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:enabled="false"
+                android:text="@string/dialog_add_item_radio_widget"
+                android:layout_weight="1"/>
     </RadioGroup>
+
+    <GridView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_add_item_colors"
+            android:layout_gravity="center"
+            android:numColumns="5"
+            tools:listitem="@layout/list_item_color"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_item_remove_item_title"
+            android:id="@+id/dialog_add_item_remove"
+            android:visibility="gone"/>
 
 </LinearLayout>

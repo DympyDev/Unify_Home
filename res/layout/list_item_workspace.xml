@@ -16,6 +16,7 @@
                 android:layout_width="fill_parent">
 
             <View
+                    android:id="@+id/item_workspace_view_sideline"
                     android:background="@color/Holo.Blue.Dark"
                     android:layout_width="7dp"
                     android:layout_height="fill_parent"/>
@@ -33,6 +34,7 @@
         </LinearLayout>
 
         <View
+                android:id="@+id/item_workspace_view_bottomline"
                 android:background="@color/Holo.Blue.Dark"
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"/>
@@ -42,7 +44,8 @@
             android:orientation="vertical"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
-            android:background="@drawable/card_bottom">
+            android:background="@drawable/card_bottom"
+            android:paddingTop="3dp">
 
         <LinearLayout
                 android:id="@+id/item_workspace_layout_widget"
