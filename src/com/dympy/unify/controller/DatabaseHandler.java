@@ -473,6 +473,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void updateScreenItem(Item item, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
+        values.put(COL_ITEM_SCREEN, item.getScreenID());
         values.put(COL_ITEM_NAME, item.getName());
         values.put(COL_ITEM_TYPE, (item.getType() == Type.APPS ? 0 : 1));
         values.put(COL_ITEM_POSITION, item.getPosition());

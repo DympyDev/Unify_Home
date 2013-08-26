@@ -134,23 +134,16 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
         renameText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         renameText.setText(screen.getName());
         listDialog.setView(renameText);
-        listDialog.setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
+        listDialog.setNegativeButton(getString(R.string.dialog_btn_cancel), null).
+                setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                screen.setName(renameText.getText().toString());
-                app.updateScreen(screen);
-                updatePager();
-            }
-        });
-
-        listDialog.setNegativeButton(getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Canceled.
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        screen.setName(renameText.getText().toString());
+                        app.updateScreen(screen);
+                        getActionBar().setTitle(screen.getName());
+                    }
+                });
 
         listDialog.show();
     }
@@ -163,22 +156,18 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
         screenName.setHint(getString(R.string.dialog_add_screen_edit_hint));
         addScreen.setMessage(getString(R.string.dialog_add_screen_message));
         addScreen.setView(screenName);
-        addScreen.setNegativeButton(getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-        addScreen.setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
+        addScreen.setNegativeButton(getString(R.string.dialog_btn_cancel), null)
+                .setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Screen newScreen = new Screen();
-                newScreen.setName(screenName.getText().toString());
-                newScreen.setPosition(app.SCREENS.size());
-                app.addScreen(newScreen);
-                updatePager();
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Screen newScreen = new Screen();
+                        newScreen.setName(screenName.getText().toString());
+                        newScreen.setPosition(app.SCREENS.size());
+                        app.addScreen(newScreen);
+                        updatePager();
+                    }
+                });
         addScreen.show();
     }
 
@@ -272,21 +261,15 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
             AlertDialog.Builder removeScreen = new AlertDialog.Builder(this);
             removeScreen.setTitle(getString(R.string.dialog_remove_screen_title));
             removeScreen.setMessage(getString(R.string.dialog_remove_screen_message));
-            removeScreen.setNegativeButton(getString(R.string.dialog_btn_no), new DialogInterface.OnClickListener() {
+            removeScreen.setNegativeButton(getString(R.string.dialog_btn_no), null)
+                    .setPositiveButton(getString(R.string.dialog_btn_yes), new DialogInterface.OnClickListener() {
 
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    // Canceled.
-                }
-            });
-            removeScreen.setPositiveButton(getString(R.string.dialog_btn_yes), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    app.removeScreen(screen);
-                    updatePager();
-                }
-            });
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            app.removeScreen(screen);
+                            updatePager();
+                        }
+                    });
             removeScreen.show();
         } else {
             //TODO: Extract to string file

@@ -250,6 +250,7 @@ public class LauncherApplication extends Application {
 
     public void updateScreenItem(Item item) {
         db.updateScreenItem(item);
+        //populateScreens();
     }
 
     /*

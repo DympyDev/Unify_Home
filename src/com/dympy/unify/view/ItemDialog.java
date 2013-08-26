@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.dympy.unify.Launcher;
 import com.dympy.unify.LauncherApplication;
@@ -20,6 +23,7 @@ import com.dympy.unify.R;
 import com.dympy.unify.model.AppData;
 import com.dympy.unify.model.Item;
 import com.dympy.unify.model.ItemApp;
+import com.dympy.unify.model.Screen;
 
 import static com.dympy.unify.model.Item.Type.*;
 
@@ -133,6 +137,58 @@ public class ItemDialog extends AlertDialog.Builder {
                         }
                     });
                     removeApp.show();
+                }
+            });
+            Button moveBtn = (Button) dialogLayout.findViewById(R.id.dialog_add_item_move);
+            moveBtn.setVisibility(View.VISIBLE);
+            moveBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemName != null) {
+                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(itemName.getWindowToken(), 0);
+                    }
+                    AlertDialog.Builder moveApp = new AlertDialog.Builder(context);
+                    moveApp.setTitle("Move Item");
+                    moveApp.setMessage("Select the new screen");
+
+                    String[] screens = new String[application.SCREENS.size()];
+                    final int[] tempScreenID = {-1};
+
+                    for (int i = 0; i < application.SCREENS.size(); i++) {
+                        screens[i] = application.SCREENS.get(i).getName();
+                    }
+
+                    ListView screenList = new ListView(context);
+                    screenList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                    screenList.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice, screens));
+                    screenList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            tempScreenID[0] = application.SCREENS.get(position).getScreenID();
+                        }
+                    });
+
+                    moveApp.setView(screenList);
+                    moveApp.setNegativeButton(context.getString(R.string.dialog_btn_no), null);
+                    moveApp.setPositiveButton(context.getString(R.string.dialog_btn_yes), new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            if (tempScreenID[0] != -1) {
+                                //TODO: Update item positions of the screen where it came from..
+                                application.removeScreenItem(item);
+                                item.setScreenID(tempScreenID[0]);
+                                item.setPosition(application.getScreen(tempScreenID[0]).getItems().size());
+                                application.addScreenItem(item);
+                                ((Launcher) context).updatePager();
+                                instance.dismiss();
+                            } else {
+                                Toast.makeText(context, "Please select a destination screen", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    moveApp.show();
                 }
             });
         }

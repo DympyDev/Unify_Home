@@ -65,4 +65,11 @@
             android:id="@+id/dialog_add_item_remove"
             android:visibility="gone"/>
 
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Move Item"
+            android:id="@+id/dialog_add_item_move"
+            android:visibility="gone"/>
+
 </LinearLayout>
