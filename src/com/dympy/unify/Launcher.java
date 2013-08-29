@@ -16,16 +16,23 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.dympy.unify.controller.ArrayHelper;
 import com.dympy.unify.model.AppData;
 import com.dympy.unify.model.Favorite;
 import com.dympy.unify.model.Item;
+import com.dympy.unify.model.ItemApp;
 import com.dympy.unify.model.Screen;
 import com.dympy.unify.view.AppAdapter;
+import com.dympy.unify.view.AppRearrangeAdapter;
 import com.dympy.unify.view.ItemDialog;
+import com.dympy.unify.view.ItemRearrangeAdapter;
+import com.dympy.unify.view.ScreenRearrangeAdapter;
 import com.dympy.unify.view.WorkspaceAdapter;
 import com.dympy.unify.view.WorkspaceFragment;
+import com.dympy.unify.view.custom.DynamicList.DynamicListView;
 
 import java.util.ArrayList;
 
@@ -38,7 +45,7 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launcher);
+        setContentView(R.layout.act_launcher);
         getActionBar().setIcon(R.drawable.ab_unify);
 
         app = (LauncherApplication) getApplication();
@@ -80,6 +87,12 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_rearrange_items:
+                rearrangeItems();
+                return true;
+            case R.id.action_rearrange_screens:
+                rearrangeScreens();
+                return true;
             case R.id.action_add_item:
                 addItemDialog();
                 return true;
@@ -88,7 +101,6 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
                 return true;
             case R.id.action_remove_screen:
                 removeScreen(app.SCREENS.get(workspacePager.getCurrentItem()));
-                return true;
             case R.id.action_rename_screen:
                 renameScreen(app.SCREENS.get(workspacePager.getCurrentItem()));
                 return true;
@@ -123,6 +135,70 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
 
     public int getCurrentScreen() {
         return workspacePager.getCurrentItem();
+    }
+
+    private void rearrangeItems() {
+        AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
+        listDialog.setTitle("Rearrange items");
+        listDialog.setMessage("Long-click an item and drag it to it's new position.");
+
+        ArrayHelper<Item> items = app.SCREENS.get(getCurrentScreen()).getItems();
+        items.sort();
+
+        ItemRearrangeAdapter adapter = new ItemRearrangeAdapter(this, R.layout.item_rearrange_workspace, items);
+        final DynamicListView listView = new DynamicListView(this);
+
+        listView.setContentList(items);
+        listView.setAdapter(adapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        listDialog.setView(listView);
+        listDialog.setNegativeButton(getString(R.string.dialog_btn_cancel), null).
+                setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < listView.getContentList().size(); i++) {
+                            ((Item) listView.getContentList().get(i)).setPosition(i);
+                            app.updateScreenItem((Item) listView.getContentList().get(i));
+                        }
+                        updatePager();
+                    }
+                });
+
+        listDialog.show();
+    }
+
+    private void rearrangeScreens() {
+        AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
+        listDialog.setTitle("Rearrange screens");
+        listDialog.setMessage("Long-click a screen and drag it to it's new position.");
+
+        ArrayHelper<Screen> screens = app.SCREENS;
+        screens.sort();
+
+        ScreenRearrangeAdapter adapter = new ScreenRearrangeAdapter(this, R.layout.item_rearrange_workspace, screens);
+        final DynamicListView listView = new DynamicListView(this);
+
+        listView.setContentList(screens);
+        listView.setAdapter(adapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        listDialog.setView(listView);
+        listDialog.setNegativeButton(getString(R.string.dialog_btn_cancel), null).
+                setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < listView.getContentList().size(); i++) {
+                            ((Screen) listView.getContentList().get(i)).setPosition(i);
+                            app.updateScreen((Screen) listView.getContentList().get(i));
+                        }
+                        updatePager();
+                    }
+                });
+
+        listDialog.show();
     }
 
     private void renameScreen(final Screen screen) {
@@ -232,6 +308,36 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
         appDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                final Item tempItem = tempAppDialog.getItem();
+                AlertDialog.Builder listDialog = new AlertDialog.Builder(ctx);
+                listDialog.setTitle("Rearrange apps");
+                listDialog.setMessage("Long-click an app and drag it to it's new position in the item.");
+
+                ArrayHelper<ItemApp> apps = tempItem.getApps();
+                apps.sort();
+
+                AppRearrangeAdapter adapter = new AppRearrangeAdapter(ctx, R.layout.item_rearrange_workspace, apps);
+                final DynamicListView listView = new DynamicListView(ctx);
+
+                listView.setContentList(apps);
+                listView.setAdapter(adapter);
+                listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+                listDialog.setView(listView);
+                listDialog.setNegativeButton(getString(R.string.dialog_btn_cancel), null).
+                        setPositiveButton(getString(R.string.dialog_btn_ok), new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                for (int i = 0; i < listView.getContentList().size(); i++) {
+                                    ((ItemApp) listView.getContentList().get(i)).setPosition(i);
+                                }
+                                tempItem.setApps((ArrayHelper<ItemApp>) listView.getContentList());
+                                tempAppDialog.setItem(tempItem);
+                            }
+                        });
+
+                listDialog.show();
                 Toast.makeText(ctx, "This feature is not yet implemented", Toast.LENGTH_LONG).show();
                 //TODO: A third dialog which can be used to rearrange your item
             }
@@ -284,7 +390,7 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
 
         GridView appGrid = new GridView(this);
         appGrid.setNumColumns(getResources().getInteger(R.integer.add_app_columns));
-        AppAdapter gridAdapter = new AppAdapter(this, R.layout.list_item_app, app.getApps());
+        AppAdapter gridAdapter = new AppAdapter(this, R.layout.item_app, app.getApps());
         appGrid.setAdapter(gridAdapter);
         listBuilder.setView(appGrid);
         listDialog = listBuilder.create();

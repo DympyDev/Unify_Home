@@ -27,7 +27,7 @@ public class Drawer extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drawer);
+        setContentView(R.layout.act_drawer);
         getActionBar().setIcon(R.drawable.ab_unify);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         application = (LauncherApplication) getApplication();
@@ -121,10 +121,10 @@ public class Drawer extends FragmentActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_appgrid, container, false);
+            View rootView = inflater.inflate(R.layout.frag_appgrid, container, false);
 
             GridView appGrid = (GridView) rootView.findViewById(R.id.activity_drawer_appgrid);
-            appGrid.setAdapter(new AppAdapter(getActivity(), R.layout.list_item_app, apps));
+            appGrid.setAdapter(new AppAdapter(getActivity(), R.layout.item_app, apps));
             appGrid.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {

@@ -481,6 +481,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.update(TABLE_SCREEN_ITEM, values, COL_ITEM_ID + " = ?",
                 new String[]{String.valueOf(item.getItemID())});
+        for (int i = 0; i < item.getApps().size(); i++) {
+            updateAppItem(item.getApps().get(i), db);
+        }
     }
 
     public void updateAppItem(ItemApp app) {
@@ -490,7 +493,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void updateAppItem(ItemApp app, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
-        values.put(COL_ITEM_POSITION, app.getPosition());
+        values.put(COL_APP_POSITION, app.getPosition());
 
         db.update(TABLE_SCREEN_ITEM_APP, values,
                 COL_APP_ITEM + "=" + app.getItemID() + " AND "

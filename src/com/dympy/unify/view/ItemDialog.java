@@ -23,7 +23,6 @@ import com.dympy.unify.R;
 import com.dympy.unify.model.AppData;
 import com.dympy.unify.model.Item;
 import com.dympy.unify.model.ItemApp;
-import com.dympy.unify.model.Screen;
 
 import static com.dympy.unify.model.Item.Type.*;
 
@@ -109,7 +108,7 @@ public class ItemDialog extends AlertDialog.Builder {
     public void initDialog() {
         this.setTitle(context.getString(R.string.dialog_add_item_title));
         LayoutInflater inflater = ((Launcher) context).getLayoutInflater();
-        View dialogLayout = inflater.inflate(R.layout.dialog_add_item, null);
+        View dialogLayout = inflater.inflate(R.layout.dlg_add_item, null);
         itemName = (EditText) dialogLayout.findViewById(R.id.dialog_add_item_input);
         if (!isNewItem) {
             itemName.setText(item.getName());
@@ -149,8 +148,7 @@ public class ItemDialog extends AlertDialog.Builder {
                         imm.hideSoftInputFromWindow(itemName.getWindowToken(), 0);
                     }
                     AlertDialog.Builder moveApp = new AlertDialog.Builder(context);
-                    moveApp.setTitle("Move Item");
-                    moveApp.setMessage("Select the new screen");
+                    moveApp.setTitle("Move item to another screen");
 
                     String[] screens = new String[application.SCREENS.size()];
                     final int[] tempScreenID = {-1};
@@ -195,9 +193,9 @@ public class ItemDialog extends AlertDialog.Builder {
 
         final ColorAdapter adapter;
         if (isNewItem) {
-            adapter = new ColorAdapter(context, R.layout.list_item_color, context.getResources().getIntArray(R.array.item_accents));
+            adapter = new ColorAdapter(context, R.layout.item_color, context.getResources().getIntArray(R.array.item_accents));
         } else {
-            adapter = new ColorAdapter(context, R.layout.list_item_color, context.getResources().getIntArray(R.array.item_accents), item.getAccent());
+            adapter = new ColorAdapter(context, R.layout.item_color, context.getResources().getIntArray(R.array.item_accents), item.getAccent());
         }
         GridView colorGrid = (GridView) dialogLayout.findViewById(R.id.dialog_add_item_colors);
         colorGrid.setAdapter(adapter);
@@ -218,7 +216,7 @@ public class ItemDialog extends AlertDialog.Builder {
         this.setTitle("Choose Content");
         GridView appGrid = new GridView(context);
         appGrid.setNumColumns(context.getResources().getInteger(R.integer.add_app_columns));
-        appGridAdapter = new AppAdapter(context, R.layout.list_item_app_select, application.getApps(), item.getApps());
+        appGridAdapter = new AppAdapter(context, R.layout.item_app_select, application.getApps(), item.getApps());
         appGrid.setAdapter(appGridAdapter);
         appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

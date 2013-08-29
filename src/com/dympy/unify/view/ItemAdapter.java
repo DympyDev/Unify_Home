@@ -63,7 +63,7 @@ public class ItemAdapter extends BaseAdapter {
         Item item = items[position];
         if (rowView == null) {
             LayoutInflater inflater = context.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.list_item_workspace, null);
+            rowView = inflater.inflate(R.layout.item_workspace, null);
             ItemHolder itemHolder = new ItemHolder();
             itemHolder.sideLine = rowView.findViewById(R.id.item_workspace_view_sideline);
             itemHolder.bottomLine = rowView.findViewById(R.id.item_workspace_view_bottomline);
@@ -94,7 +94,7 @@ public class ItemAdapter extends BaseAdapter {
                 apps.add(app.getAppData());
             }
             holder.appGrid.setExpanded(true);
-            holder.appGrid.setAdapter(new AppAdapter(context, R.layout.list_item_app, apps));
+            holder.appGrid.setAdapter(new AppAdapter(context, R.layout.item_app, apps));
             holder.appGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {

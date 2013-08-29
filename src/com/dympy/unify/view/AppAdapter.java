@@ -2,7 +2,6 @@ package com.dympy.unify.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +67,7 @@ public class AppAdapter extends BaseAdapter {
 
             holder = new AppDataHolder();
             if (row != null) {
-                if (layoutResourceId == R.layout.list_item_app_select) {
+                if (layoutResourceId == R.layout.item_app_select) {
                     holder.txtTitle = (TextView) row.findViewById(R.id.txt_app_select_name);
                     holder.cb = (CheckBox) row.findViewById(R.id.txt_app_select_check);
                 } else {
@@ -84,7 +83,7 @@ public class AppAdapter extends BaseAdapter {
         holder.txtTitle.setText(app.getName());
         holder.txtTitle.setCompoundDrawables(null, app.getIcon(), null, null);
 
-        if (layoutResourceId == R.layout.list_item_app_select) {
+        if (layoutResourceId == R.layout.item_app_select) {
             if (inSelected(app) != -1) {
                 holder.cb.setChecked(true);
             } else {
