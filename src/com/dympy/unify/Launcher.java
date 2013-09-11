@@ -79,6 +79,14 @@ public class Launcher extends FragmentActivity implements OnClickListener, View.
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        /*
+         * We don't call super here, because the fragments will break if I do..
+         */
+        //super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.launcher, menu);
         return true;

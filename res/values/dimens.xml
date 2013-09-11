@@ -12,4 +12,10 @@
     <dimen name="workspace_padding">10dp</dimen>
     <dimen name="workspace_divider">25dp</dimen>
 
+    <dimen name="item_workspace_padding_all">5dp</dimen>
+    <dimen name="item_workspace_padding_top">8dp</dimen>
+    <dimen name="item_workspace_padding_bottom">8dp</dimen>
+    <dimen name="item_workspace_padding_left">5dp</dimen>
+    <dimen name="item_workspace_padding_right">5dp</dimen>
+
 </resources>

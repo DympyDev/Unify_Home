@@ -1,23 +1,29 @@
 package com.dympy.unify.view;
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ListView;
 
 import com.dympy.unify.LauncherApplication;
 import com.dympy.unify.R;
 import com.dympy.unify.model.Item;
-import com.dympy.unify.view.ItemAdapter;
+import com.dympy.unify.view.custom.MultiColumnList.MultiColumnListView;
+import com.dympy.unify.view.custom.MultiColumnList.internal.PLA_AbsListView;
 
 import java.util.ArrayList;
 
-public class WorkspaceFragment extends ListFragment {
+public class WorkspaceFragment extends Fragment {
     private ArrayList<Item> items = new ArrayList<Item>();
     private String screenTitle = "";
     private int workspaceID = -1;
     private ItemAdapter adapter = null;
+    private ListView listView;
+    private MultiColumnListView gridView;
 
     public WorkspaceFragment() {
 
@@ -33,31 +39,28 @@ public class WorkspaceFragment extends ListFragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        getListView().setPadding(getResources().getDimensionPixelOffset(R.dimen.workspace_padding), 0,
-                getResources().getDimensionPixelOffset(R.dimen.workspace_padding), 0);
-        getListView().setDivider(null);
-        getListView().setDividerHeight(getResources().getDimensionPixelOffset(R.dimen.item_workspace_divider));
-        getListView().setVerticalScrollBarEnabled(false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("WorkspaceFragment", "onCreateView called.");
         //TODO: Set an empty view with fancy arrows to the buttons and stuff
-        if (getListAdapter() != null) {
-            setListAdapter(null);
-        }
-        AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-        View header = new View(getActivity());
-        header.setBackground(null);
-        header.setLayoutParams(layoutParams);
-        getListView().addHeaderView(header);
+        gridView = new MultiColumnListView(getActivity());
+        gridView.setDivider(null);
+        gridView.setVerticalScrollBarEnabled(false);
 
-        View footer = new View(getActivity());
-        footer.setBackground(null);
-        footer.setLayoutParams(layoutParams);
-        getListView().addFooterView(footer);
+        listView = new ListView(getActivity());
+        listView.setDivider(null);
+        listView.setVerticalScrollBarEnabled(false);
 
         adapter = new ItemAdapter(getActivity(), items.toArray(new Item[items.size()]));
-        setListAdapter(adapter);
+        gridView.setAdapter(adapter);
+        listView.setAdapter(adapter);
+
+        if (getActivity().findViewById(R.id.launcher_land) != null) {
+            Log.d("WorkspaceFragment", "returning gridView");
+            return gridView;
+        } else {
+            Log.d("WorkspaceFragment", "returning listView");
+            return listView;
+        }
     }
 
     public String getScreenTitle() {

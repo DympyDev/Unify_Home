@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="integer" name="workspace_app_columns">4</item>
+    <item type="integer" name="drawer_app_columns">6</item>
+    <item type="integer" name="drawer_app_rows">4</item>
+    <item type="integer" name="add_app_columns">3</item>
+</resources>
